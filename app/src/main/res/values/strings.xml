@@ -115,6 +115,33 @@
         <item quantity="other">Line %1$s reaches %3$s in about %2$d minutes</item>
     </plurals>
 
+    <!-- Search -->
+    <string name="search">Search</string>
+    <string name="clear">Clear</string>
+    <string name="more">More options</string>
+    <string name="recent_searches">Recent</string>
+    <string name="search_tips">Type a line number (e.g. 480), a stop name or 5-digit stop code, or any place or address.</string>
+    <string name="section_lines">Lines</string>
+    <string name="section_stops">Stops</string>
+    <string name="section_places">Places</string>
+    <string name="no_results">No results</string>
+    <string name="osm_credit">Place search © OpenStreetMap contributors (Nominatim)</string>
+    <string name="save_as_home">Save as Home</string>
+    <string name="save_as_work">Save as Work</string>
+    <string name="saved">Saved ⭐</string>
+
+    <!-- Favorites -->
+    <string name="set_home">Set home</string>
+    <string name="set_work">Set work</string>
+    <string name="remove">Remove</string>
+    <string name="no_favorite_stops">Tap ☆ on any stop to see its next buses here.</string>
+    <string name="no_favorite_lines">Tap ☆ on any line to keep it here.</string>
+    <string name="favorites_empty">Nothing saved yet</string>
+    <string name="no_arrivals_2h">No buses in the next 2 hours</string>
+    <string name="show_on_widget">Show on home-screen widget</string>
+    <string name="on_widget">on widget</string>
+    <string name="widget_no_stop">Save a favorite stop in BusLive to see it here.</string>
+
     <!-- Near me -->
     <string name="nearby_needs_location">Allow location to see the stops around you.</string>
     <string name="allow_location">Allow location</string>
