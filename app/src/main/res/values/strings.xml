@@ -153,6 +153,33 @@
     <string name="no_departures">No departures on this day</string>
     <string name="trip_departing">Trip leaving %1$s</string>
 
+    <!-- Planner -->
+    <string name="plan_title">Plan a trip</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="choose_destination">Choose destination</string>
+    <string name="swap">Swap start and destination</string>
+    <string name="picker_hint">Stop, place or address</string>
+    <string name="leave_now">Leave now</string>
+    <string name="leave_at">Leave at %1$s</string>
+    <string name="leave_at_title">Leave at</string>
+    <string name="planning">Finding buses… (stops near you × stops near your destination)</string>
+    <string name="recent_trips">Recent trips</string>
+    <string name="plan_hint">Pick a destination, or long-press the map to drop a pin.</string>
+    <string name="plan_needs_location">Allow location to start from where you are, or pick a start point.</string>
+    <string name="no_trips_found">No bus found for this trip in the next hour (direct or with one transfer).</string>
+    <string name="planner_local">Built-in planner: direct buses and one-transfer trips, planned times.</string>
+    <string name="planner_otp">Planned by your OpenTripPlanner server.</string>
+    <string name="planner_otp_failed">OpenTripPlanner server did not answer, used the built-in planner.</string>
+    <string name="minutes_total">%1$d min</string>
+    <string name="transfers">%1$d transfer</string>
+    <string name="trip_breakdown">Walk %1$d min · Wait %2$d min · Ride %3$d min · %4$d stops</string>
+    <string name="start">Start live directions</string>
+    <string name="destination">destination</string>
+    <string name="leg_walk">Walk %1$s to %2$s</string>
+    <string name="leg_board">Board at %1$s toward %2$s</string>
+    <string name="leg_ride">Ride %1$d stops, get off at %2$s (%3$s)</string>
+
     <!-- Near me -->
     <string name="nearby_needs_location">Allow location to see the stops around you.</string>
     <string name="allow_location">Allow location</string>
