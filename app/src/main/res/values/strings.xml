@@ -142,6 +142,17 @@
     <string name="on_widget">on widget</string>
     <string name="widget_no_stop">Save a favorite stop in BusLive to see it here.</string>
 
+    <!-- Line -->
+    <string name="line_not_found">Line not found in today\'s timetable</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="cancel">Cancel</string>
+    <string name="schedule_estimated_from">Future timetables are not published yet. Showing the same weekday from %1$s.</string>
+    <string name="stops_tab">Stops</string>
+    <string name="departures_tab">Departures</string>
+    <string name="no_departures">No departures on this day</string>
+    <string name="trip_departing">Trip leaving %1$s</string>
+
     <!-- Near me -->
     <string name="nearby_needs_location">Allow location to see the stops around you.</string>
     <string name="allow_location">Allow location</string>
