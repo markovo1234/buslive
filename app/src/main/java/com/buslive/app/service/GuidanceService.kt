@@ -42,7 +42,12 @@ class GuidanceService : LifecycleService() {
         }
         val type = if (Build.VERSION.SDK_INT >= 29) ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION else 0
         runCatching { ServiceCompat.startForeground(this, Notifications.ID_GUIDANCE, buildNotification(state), type) }
-            .onFailure { stopSelf(); return START_NOT_STICKY }
+            .onFailure {
+                // e.g. location permission revoked: nothing can run without it.
+                manager.stop()
+                stopSelf()
+                return START_NOT_STICKY
+            }
 
         if (engineJob?.isActive != true) {
             engineJob = lifecycleScope.launch {

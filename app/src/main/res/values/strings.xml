@@ -208,6 +208,18 @@
     <string name="alert_get_off_text">Your stop %1$s is next (line %2$s)</string>
     <string name="alert_arrived_title">You have arrived 🎉</string>
     <string name="alert_arrived_text">You reached %1$s</string>
+    <string name="live_directions">Live directions</string>
+    <string name="share_trip">Share my trip</string>
+    <string name="no_active_directions">No live directions running. Plan a trip and tap Start, or tap 🔔 next to a stop.</string>
+    <string name="waiting_gps">Waiting for GPS…</string>
+    <string name="next_bus_leaves">Line %1$s leaves at %2$s (%3$s)</string>
+    <string name="wait_at">Wait at %1$s</string>
+    <string name="bus_distance">Bus is %1$s away (GPS %2$s)</string>
+    <string name="bus_not_live_yet">Bus not reporting live yet – showing planned time.</string>
+    <string name="toward">Toward %1$s</string>
+    <string name="get_off_at">Get off at %1$s</string>
+    <string name="final_eta">%1$s at ~%2$s</string>
+    <string name="guidance_note">Directions keep running with the screen off. Stop alerts use your phone GPS. GPS checks less often while you are far away to save battery.</string>
     <string name="share_trip_text">I\'m on bus line %1$s to %2$s, heading to %3$s. ETA %4$s. (via BusLive)</string>
     <string name="share_trip_walk_text">I\'m on my way to %1$s. ETA %2$s. (via BusLive)</string>
 </resources>
