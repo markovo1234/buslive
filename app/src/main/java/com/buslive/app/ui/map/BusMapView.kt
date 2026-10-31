@@ -113,12 +113,13 @@ fun BusMapView(
         }
     }
 
-    LaunchedEffect(map, dark) {
+    val source = LocalMapSource.current
+    LaunchedEffect(map, dark, source.useTomTom, source.tomtomKey) {
         val m = map ?: return@LaunchedEffect
         controller?.dispose()
         controller = null
         ready(null)
-        m.setStyle(Style.Builder().fromUri(if (dark) BusMapController.STYLE_DARK else BusMapController.STYLE_LIGHT)) { style ->
+        m.setStyle(source.style(dark)) { style ->
             val c = BusMapController(context, m, style, scope, dark)
             controller = c
             ready(c)

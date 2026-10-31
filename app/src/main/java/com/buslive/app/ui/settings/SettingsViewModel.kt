@@ -48,6 +48,29 @@ class SettingsViewModel @Inject constructor(
     private val _otpTest = MutableStateFlow<OtpTest>(OtpTest.Idle)
     val otpTest: StateFlow<OtpTest> = _otpTest.asStateFlow()
 
+    private val _tomtomTest = MutableStateFlow<OtpTest>(OtpTest.Idle)
+    val tomtomTest: StateFlow<OtpTest> = _tomtomTest.asStateFlow()
+
+    fun setTomtomKey(key: String) = viewModelScope.launch {
+        settings.setTomtomKey(key)
+        _tomtomTest.value = OtpTest.Idle
+    }
+
+    /** Fetches one Tel Aviv map tile with the key. */
+    fun testTomtom(key: String) = viewModelScope.launch {
+        _tomtomTest.value = OtpTest.Running
+        val url = com.buslive.app.ui.map.MapSource.tileUrl(key.trim(), dark = false)
+            .replace("{z}", "10").replace("{x}", "612").replace("{y}", "415")
+        _tomtomTest.value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching {
+                client.newCall(okhttp3.Request.Builder().url(url).build()).execute().use { r ->
+                    if (r.isSuccessful && r.header("Content-Type").orEmpty().startsWith("image")) OtpTest.Ok(1)
+                    else OtpTest.Failed("HTTP ${r.code}")
+                }
+            }.getOrElse { OtpTest.Failed(it.message ?: it.javaClass.simpleName) }
+        }
+    }
+
     fun setTheme(mode: ThemeMode) = viewModelScope.launch { settings.setThemeMode(mode) }
 
     fun setOtpUrl(url: String) = viewModelScope.launch {

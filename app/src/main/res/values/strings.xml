@@ -185,6 +185,13 @@
     <string name="leg_ride" tools:ignore="PluralsCandidate">Ride %1$d stops, get off at %2$s (%3$s)</string>
 
     <!-- Settings -->
+    <string name="map_provider">Map</string>
+    <string name="tomtom_desc">For a fresher map, paste a free TomTom key (developer.tomtom.com → sign up → copy the key). Without a key, or when offline, BusLive uses the free OpenStreetMap map.</string>
+    <string name="tomtom_key">TomTom API key</string>
+    <string name="tomtom_ok">Key works ✅ – map switches to TomTom</string>
+    <string name="tomtom_failed">Key not accepted: %1$s</string>
+    <string name="map_using_tomtom">Using the TomTom map (OpenStreetMap when offline).</string>
+    <string name="map_using_free">Using the free OpenStreetMap map.</string>
     <string name="language">Language</string>
     <string name="follow_system">Follow system</string>
     <string name="theme">Theme</string>
@@ -215,7 +222,7 @@
     <string name="about">About</string>
     <string name="about_text">BusLive shows live Israeli bus positions, arrivals and trip plans. Fast, light, no ads.</string>
     <string name="privacy_text">Privacy: no accounts, no ads, no analytics, no tracking. Your location and favorites stay on this phone.</string>
-    <string name="credits_text">Bus data: Open Bus Stride API by the Public Knowledge Workshop (Hasadna), from Israel Ministry of Transport GTFS and SIRI. Map: OpenFreeMap, © OpenMapTiles, © OpenStreetMap contributors. Place search: Nominatim / OpenStreetMap.</string>
+    <string name="credits_text">Bus data: Open Bus Stride API by the Public Knowledge Workshop (Hasadna), from Israel Ministry of Transport GTFS and SIRI. Map: TomTom (with your key) or OpenFreeMap, © OpenMapTiles, © OpenStreetMap contributors. Place search: Nominatim / OpenStreetMap.</string>
 
     <!-- Near me -->
     <string name="stops_around_you">Stops around you</string>

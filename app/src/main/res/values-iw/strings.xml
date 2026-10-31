@@ -188,6 +188,13 @@
     <string name="leg_ride" tools:ignore="PluralsCandidate">נסיעה %1$d תחנות, ירידה ב%2$s (%3$s)</string>
 
     <!-- Settings -->
+    <string name="map_provider">מפה</string>
+    <string name="tomtom_desc">למפה עדכנית יותר, הדביקו מפתח TomTom חינמי (developer.tomtom.com ← הרשמה ← העתקת המפתח). בלי מפתח, או בלי חיבור, BusLive משתמשת במפה החינמית של OpenStreetMap.</string>
+    <string name="tomtom_key">מפתח TomTom API</string>
+    <string name="tomtom_ok">המפתח עובד ✅ – המפה עוברת ל-TomTom</string>
+    <string name="tomtom_failed">המפתח לא התקבל: %1$s</string>
+    <string name="map_using_tomtom">בשימוש: מפת TomTom (OpenStreetMap כשאין חיבור).</string>
+    <string name="map_using_free">בשימוש: המפה החינמית של OpenStreetMap.</string>
     <string name="language">שפה</string>
     <string name="follow_system">לפי המכשיר</string>
     <string name="theme">ערכת נושא</string>
@@ -218,7 +225,7 @@
     <string name="about">אודות</string>
     <string name="about_text">BusLive מציגה מיקומי אוטובוסים בזמן אמת בישראל, זמני הגעה ותכנון נסיעות. מהירה, קלה, בלי פרסומות.</string>
     <string name="privacy_text">פרטיות: בלי חשבונות, בלי פרסומות, בלי אנליטיקס ובלי מעקב. המיקום והמועדפים נשארים בטלפון.</string>
-    <string name="credits_text">נתוני תחבורה: Open Bus Stride API של הסדנא לידע ציבורי, מתוך GTFS ו-SIRI של משרד התחבורה. מפה: OpenFreeMap, ‏© OpenMapTiles, ‏© תורמי OpenStreetMap. חיפוש מקומות: Nominatim / OpenStreetMap.</string>
+    <string name="credits_text">נתוני תחבורה: Open Bus Stride API של הסדנא לידע ציבורי, מתוך GTFS ו-SIRI של משרד התחבורה. מפה: TomTom (עם המפתח שלך) או OpenFreeMap, ‏© OpenMapTiles, ‏© תורמי OpenStreetMap. חיפוש מקומות: Nominatim / OpenStreetMap.</string>
 
     <!-- Near me -->
     <string name="stops_around_you">תחנות סביבך</string>

@@ -62,6 +62,15 @@ fun SettingsScreen(onBack: () -> Unit, vm: SettingsViewModel = hiltViewModel()) 
     val sync by vm.sync.collectAsStateWithLifecycle()
     val offline by vm.offlineProgress.collectAsStateWithLifecycle()
     val otpTest by vm.otpTest.collectAsStateWithLifecycle()
+    val tomtomTest by vm.tomtomTest.collectAsStateWithLifecycle()
+    var tomtomKey by rememberSaveable { mutableStateOf("") }
+    var tomtomLoaded by remember { mutableStateOf(false) }
+    LaunchedEffect(settings.tomtomKey) {
+        if (!tomtomLoaded) {
+            tomtomKey = settings.tomtomKey
+            tomtomLoaded = true
+        }
+    }
     val dark = LocalDarkTheme.current
     var otpUrl by rememberSaveable { mutableStateOf("") }
     var otpLoaded by remember { mutableStateOf(false) }
@@ -111,6 +120,38 @@ fun SettingsScreen(onBack: () -> Unit, vm: SettingsViewModel = hiltViewModel()) 
                 OptionRow(stringResource(label), settings.themeMode == mode) { vm.setTheme(mode) }
             }
             HorizontalDivider()
+
+            // Map provider
+            SectionHeader(stringResource(R.string.map_provider))
+            Column(Modifier.padding(horizontal = 16.dp)) {
+                Text(stringResource(R.string.tomtom_desc), style = MaterialTheme.typography.bodyMedium)
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = tomtomKey,
+                    onValueChange = { tomtomKey = it },
+                    label = { Text(stringResource(R.string.tomtom_key)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Button(onClick = { vm.setTomtomKey(tomtomKey) }) { Text(stringResource(R.string.save)) }
+                    OutlinedButton(onClick = { vm.testTomtom(tomtomKey) }, enabled = tomtomKey.isNotBlank()) { Text(stringResource(R.string.test)) }
+                    TextButton(onClick = { tomtomKey = ""; vm.setTomtomKey("") }) { Text(stringResource(R.string.clear)) }
+                }
+                when (val t = tomtomTest) {
+                    SettingsViewModel.OtpTest.Running -> Text(stringResource(R.string.otp_testing))
+                    is SettingsViewModel.OtpTest.Ok -> Text(stringResource(R.string.tomtom_ok), color = MaterialTheme.colorScheme.primary)
+                    is SettingsViewModel.OtpTest.Failed -> Text(stringResource(R.string.tomtom_failed, t.message), color = MaterialTheme.colorScheme.error)
+                    SettingsViewModel.OtpTest.Idle -> Text(
+                        stringResource(
+                            if (settings.tomtomKey.isNotBlank() || com.buslive.app.BuildConfig.TOMTOM_API_KEY.isNotBlank()) R.string.map_using_tomtom
+                            else R.string.map_using_free
+                        ),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
+            }
+            HorizontalDivider(Modifier.padding(top = 12.dp))
 
             // Offline data
             SectionHeader(stringResource(R.string.offline_data))

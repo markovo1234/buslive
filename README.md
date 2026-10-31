@@ -145,6 +145,12 @@ Battery friendly: GPS every 30 s when far, 10 s mid-range, 3 s close to the stop
 Quick mode: 🔔 next to any stop in a bus sheet or line screen = *alert me at stop X* without planning.
 **Share my trip**: line, stop and ETA via the Android share sheet.
 
+### 🗺️ Map data (TomTom, optional, free)
+By default the map is OpenStreetMap data (OpenFreeMap). For fresher map data paste a **free TomTom key** in
+*Settings → Map* (sign up at <https://developer.tomtom.com>, copy the key, tap *Test*, *Save*). No rebuild needed.
+To bake a key into builds: `tomtom.apiKey=YOUR_KEY` in `local.properties`, or a GitHub Actions secret `TOMTOM_API_KEY`.
+Offline the app falls back to the free map (and your downloaded area).
+
 ### ⚙️ Settings
 Language (system / English / עברית), theme (system / light / dark), stops & lines cache status + refresh,
 **download the map around you for offline use** (~9 km, zoom 10–15), OTP server URL, about & credits.

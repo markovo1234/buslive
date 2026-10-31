@@ -24,6 +24,7 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val otpBaseUrl: String = "",
+    val tomtomKey: String = "",
     val widgetStopCode: Int? = null,
     val lastSyncDate: String? = null,
     val lastSyncAt: Long = 0L,
@@ -36,6 +37,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
     private object Keys {
         val THEME = stringPreferencesKey("theme_mode")
         val OTP_URL = stringPreferencesKey("otp_base_url")
+        val TOMTOM_KEY = stringPreferencesKey("tomtom_key")
         val WIDGET_STOP = intPreferencesKey("widget_stop_code")
         val SYNC_DATE = stringPreferencesKey("last_sync_date")
         val SYNC_AT = longPreferencesKey("last_sync_at")
@@ -49,6 +51,7 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         AppSettings(
             themeMode = p[Keys.THEME]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: ThemeMode.SYSTEM,
             otpBaseUrl = p[Keys.OTP_URL].orEmpty(),
+            tomtomKey = p[Keys.TOMTOM_KEY].orEmpty(),
             widgetStopCode = p[Keys.WIDGET_STOP],
             lastSyncDate = p[Keys.SYNC_DATE],
             lastSyncAt = p[Keys.SYNC_AT] ?: 0L,
@@ -59,6 +62,8 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
     suspend fun current(): AppSettings = settings.first()
 
     suspend fun setThemeMode(mode: ThemeMode) = context.dataStore.edit { it[Keys.THEME] = mode.name }
+
+    suspend fun setTomtomKey(key: String) = context.dataStore.edit { it[Keys.TOMTOM_KEY] = key.trim() }
 
     suspend fun setOtpBaseUrl(url: String) = context.dataStore.edit { it[Keys.OTP_URL] = url.trim() }
 

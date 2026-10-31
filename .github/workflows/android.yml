@@ -11,6 +11,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Optional: repo Settings → Secrets → Actions → TOMTOM_API_KEY. Empty = free OpenFreeMap map.
+      TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7

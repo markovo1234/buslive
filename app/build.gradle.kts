@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -17,6 +19,14 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         vectorDrawables.useSupportLibrary = true
+
+        // Optional TomTom map key: local.properties `tomtom.apiKey=...` or env TOMTOM_API_KEY (CI secret).
+        // Users can also paste a key in Settings at runtime. Empty = free OpenFreeMap map.
+        val localProps = Properties().apply {
+            rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+        }
+        val tomtomKey = (localProps.getProperty("tomtom.apiKey") ?: System.getenv("TOMTOM_API_KEY") ?: "").trim()
+        buildConfigField("String", "TOMTOM_API_KEY", "\"$tomtomKey\"")
     }
 
     buildTypes {

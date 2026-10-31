@@ -13,7 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.CompositionLocalProvider
+import com.buslive.app.data.ConnectivityMonitor
 import com.buslive.app.data.prefs.AppSettings
+import com.buslive.app.ui.map.LocalMapSource
+import com.buslive.app.ui.map.MapSource
 import com.buslive.app.data.prefs.SettingsRepository
 import com.buslive.app.data.prefs.ThemeMode
 import com.buslive.app.ui.navigation.AppRoot
@@ -25,6 +29,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var settingsRepository: SettingsRepository
+    @Inject lateinit var connectivity: ConnectivityMonitor
 
     /** Bumped when a notification asks to open live directions. */
     private val openGuidanceRequest = mutableIntStateOf(0)
@@ -49,8 +54,13 @@ class MainActivity : AppCompatActivity() {
                     navigationBarStyle = SystemBarStyle.auto(LIGHT_SCRIM, DARK_SCRIM) { dark },
                 )
             }
+            val online by connectivity.online.collectAsStateWithLifecycle()
+            // Key from Settings wins; else the one built in (local.properties / CI secret).
+            val tomtomKey = settings.tomtomKey.ifBlank { BuildConfig.TOMTOM_API_KEY }
             BusLiveTheme(mode = settings.themeMode) {
-                AppRoot(openGuidanceRequest = openGuidanceRequest.intValue)
+                CompositionLocalProvider(LocalMapSource provides MapSource(tomtomKey, online)) {
+                    AppRoot(openGuidanceRequest = openGuidanceRequest.intValue)
+                }
             }
         }
     }
