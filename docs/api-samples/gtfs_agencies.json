@@ -1,0 +1,157 @@
+[
+  {
+    "date": "2026-10-31",
+    "operator_ref": 3,
+    "agency_name": "אגד"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 25,
+    "agency_name": "אלקטרה אפיקים"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 4,
+    "agency_name": "אלקטרה אפיקים תחבורה"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 37,
+    "agency_name": "אקסטרה"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 38,
+    "agency_name": "אקסטרה ירושלים"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 35,
+    "agency_name": "בית שמש אקספרס"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 8,
+    "agency_name": "גי.בי.טורס"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 23,
+    "agency_name": "גלים"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 5,
+    "agency_name": "דן"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 32,
+    "agency_name": "דן באר שבע"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 31,
+    "agency_name": "דן בדרום"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 135,
+    "agency_name": "דרך אגד עוטף ירושלים"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 44,
+    "agency_name": "ירושלים-אבו-תור-ענאתא איחוד"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 45,
+    "agency_name": "ירושלים-אלווסט איחוד"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 50,
+    "agency_name": "ירושלים-דרום איחוד"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 49,
+    "agency_name": "ירושלים - עיסאוויה מחנה שעפאט איחוד"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 51,
+    "agency_name": "ירושלים-צור באהר איחוד"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 42,
+    "agency_name": "ירושלים-רמאללה איחוד"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 33,
+    "agency_name": "כבל אקספרס"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 21,
+    "agency_name": "כפיר"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 20,
+    "agency_name": "כרמלית"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 24,
+    "agency_name": "מועצה אזורית גולן"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 15,
+    "agency_name": "מטרופולין"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 7,
+    "agency_name": "נסיעות ותיירות"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 14,
+    "agency_name": "נתיב אקספרס"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 16,
+    "agency_name": "סופרבוס"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 18,
+    "agency_name": "קווים"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 2,
+    "agency_name": "רכבת ישראל"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 6,
+    "agency_name": "ש.א.מ"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 22,
+    "agency_name": "תבל"
+  },
+  {
+    "date": "2026-10-31",
+    "operator_ref": 34,
+    "agency_name": "תנופה"
+  }
+]

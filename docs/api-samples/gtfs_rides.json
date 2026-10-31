@@ -1,0 +1,36 @@
+[
+  {
+    "id": 161476772,
+    "gtfs_route_id": 9838484,
+    "journey_ref": "43255291_301026",
+    "start_time": "2026-10-31T17:30:00+00:00",
+    "end_time": "2026-10-31T18:19:48+00:00",
+    "gtfs_route__date": "2026-10-31",
+    "gtfs_route__line_ref": 21698,
+    "gtfs_route__operator_ref": 15,
+    "gtfs_route__route_short_name": "148",
+    "gtfs_route__route_long_name": "ת.מרכזית תל אביב קומה 6/רציפים-תל אביב יפו<->מסוף שכונה ירוקה-כפר סבא-2#",
+    "gtfs_route__route_mkt": "17148",
+    "gtfs_route__route_direction": "2",
+    "gtfs_route__route_alternative": "#",
+    "gtfs_route__agency_name": "מטרופולין",
+    "gtfs_route__route_type": "3"
+  },
+  {
+    "id": 161476773,
+    "gtfs_route_id": 9838484,
+    "journey_ref": "586271861_301026",
+    "start_time": "2026-10-31T20:45:00+00:00",
+    "end_time": "2026-10-31T21:34:48+00:00",
+    "gtfs_route__date": "2026-10-31",
+    "gtfs_route__line_ref": 21698,
+    "gtfs_route__operator_ref": 15,
+    "gtfs_route__route_short_name": "148",
+    "gtfs_route__route_long_name": "ת.מרכזית תל אביב קומה 6/רציפים-תל אביב יפו<->מסוף שכונה ירוקה-כפר סבא-2#",
+    "gtfs_route__route_mkt": "17148",
+    "gtfs_route__route_direction": "2",
+    "gtfs_route__route_alternative": "#",
+    "gtfs_route__agency_name": "מטרופולין",
+    "gtfs_route__route_type": "3"
+  }
+]

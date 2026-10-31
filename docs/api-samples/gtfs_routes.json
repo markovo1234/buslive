@@ -1,0 +1,28 @@
+[
+  {
+    "id": 9836458,
+    "date": "2026-10-31",
+    "line_ref": 1,
+    "operator_ref": 25,
+    "route_short_name": "1",
+    "route_long_name": "ת. רכבת יבנה מערב-יבנה<->ת. רכבת יבנה מזרח-יבנה-1#",
+    "route_mkt": "67001",
+    "route_direction": "1",
+    "route_alternative": "#",
+    "agency_name": "אלקטרה אפיקים",
+    "route_type": "3"
+  },
+  {
+    "id": 9836459,
+    "date": "2026-10-31",
+    "line_ref": 2,
+    "operator_ref": 25,
+    "route_short_name": "1",
+    "route_long_name": "ת. רכבת יבנה מזרח-יבנה<->ת. רכבת יבנה מערב-יבנה-2#",
+    "route_mkt": "67001",
+    "route_direction": "2",
+    "route_alternative": "#",
+    "agency_name": "אלקטרה אפיקים",
+    "route_type": "3"
+  }
+]
