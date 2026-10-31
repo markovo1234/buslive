@@ -38,6 +38,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // App ships English + Hebrew only; drop other library translations.
+    androidResources {
+        localeFilters += listOf("en", "iw", "he")
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
