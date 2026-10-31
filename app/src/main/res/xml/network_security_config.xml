@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Public APIs are HTTPS. Clear text is allowed only so a self-hosted OpenTripPlanner
+         server (Settings → OTP URL, often plain http on a home server) can be used. -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
