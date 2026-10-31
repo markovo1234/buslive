@@ -177,7 +177,9 @@ class GuidanceManager @Inject constructor(
             is TripLeg.Walk -> {
                 val d = Geo.distanceM(p, leg.to)
                 next = next.copy(distanceToTargetM = d.toInt(), etaDestination = estimateFinalEta(s, p))
-                if (d < ARRIVE_RADIUS_M) next = advance(next)
+                val nextIsBus = s.trip.legs.getOrNull(s.legIndex + 1) is TripLeg.Bus
+                // Reached the stop, or already riding (fast and near the stop: GPS never came within the radius).
+                if (d < ARRIVE_RADIUS_M || (nextIsBus && d < 200 && u.speedMps > 5f)) next = advance(next)
             }
             is TripLeg.Bus -> next = onBusLeg(next, leg, p, u.speedMps)
         }
@@ -197,7 +199,8 @@ class GuidanceManager @Inject constructor(
         val progress = Geo.progressAlong(pts, p)
         val lastIdx = pts.lastIndex
         val nextIdx = ceil(progress).toInt().coerceAtMost(lastIdx)
-        val stopsLeft = (lastIdx - floor(progress).toInt()).coerceAtLeast(0)
+        // A single-stop list means "the next stop is mine": count it as 1 left until we are close.
+        val stopsLeft = if (pts.size < 2) 1 else (lastIdx - floor(progress).toInt()).coerceAtLeast(0)
         val toDest = Geo.distanceM(p, leg.to.point)
         var next = s.copy(phase = GuidancePhase.ON_BOARD, stopsLeft = stopsLeft, distanceToTargetM = toDest.toInt())
 
@@ -282,7 +285,7 @@ class GuidanceManager @Inject constructor(
     }
 
     companion object {
-        const val ARRIVE_RADIUS_M = 40.0
+        const val ARRIVE_RADIUS_M = 60.0
         const val GET_OFF_RADIUS_M = 350.0
     }
 }
