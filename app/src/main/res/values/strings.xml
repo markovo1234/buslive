@@ -115,6 +115,13 @@
         <item quantity="other">Line %1$s reaches %3$s in about %2$d minutes</item>
     </plurals>
 
+    <!-- Near me -->
+    <string name="nearby_needs_location">Allow location to see the stops around you.</string>
+    <string name="allow_location">Allow location</string>
+    <string name="no_location_fix">Can\'t get your location right now. Is GPS on?</string>
+    <string name="no_stops_nearby">No bus stops within 1.5 km</string>
+    <string name="no_arrivals_90">No buses in the next 90 minutes</string>
+
     <!-- Guidance -->
     <string name="stop_directions">Stop</string>
     <string name="eta_at">Arrive ~%1$s</string>
