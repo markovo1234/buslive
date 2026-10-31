@@ -86,6 +86,12 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
         if (openGuidanceRequest > 0) nav.navigate(GuidanceDest) { launchSingleTop = true }
     }
 
+    // "Directions to X" from anywhere: hand X to the single Plan tab, then open that tab.
+    fun planTo(place: Place) {
+        rootVm.planTo(place)
+        nav.navigateTab(PlannerDest())
+    }
+
     fun goToMap(command: MapCommand?) {
         command?.let(rootVm::sendMapCommand)
         nav.navigate(MapDest) {
@@ -97,7 +103,7 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
     val stopActions = StopActions(
         onLineSchedule = { nav.navigate(LineDest(it)) },
         onShowLineOnMap = { goToMap(MapCommand.ShowLine(it)) },
-        onDirections = { s -> nav.navigatePlanner(Place(s.name, s.city, s.lat, s.lon)) },
+        onDirections = { s -> planTo(Place(s.name, s.city, s.lat, s.lon)) },
     )
 
     Scaffold(
@@ -108,13 +114,7 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
                     val selected = destination?.hierarchy?.any { it.hasRoute(tab.klass) } == true
                     NavigationBarItem(
                         selected = selected,
-                        onClick = {
-                            nav.navigate(tab.route) {
-                                popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
+                        onClick = { nav.navigateTab(tab.route) },
                         icon = { Icon(if (selected) tab.selectedIcon else tab.icon, contentDescription = null) },
                         label = { Text(stringResource(tab.label)) },
                     )
@@ -133,7 +133,7 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
                         openSearch = { nav.navigate(SearchDest) },
                         openSettings = { nav.navigate(SettingsDest) },
                         openLine = { nav.navigate(LineDest(it)) },
-                        planTo = { nav.navigatePlanner(it) },
+                        planTo = { planTo(it) },
                         openGuidance = { nav.navigate(GuidanceDest) { launchSingleTop = true } },
                     )
                 )
@@ -155,7 +155,7 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
                 FavoritesScreen(
                     onStop = { nav.navigate(StopDest(it)) },
                     onLine = { nav.navigate(LineDest(it)) },
-                    onPlace = { nav.navigatePlanner(it) },
+                    onPlace = { planTo(it) },
                     onSettings = { nav.navigate(SettingsDest) },
                     onSearch = { nav.navigate(SearchDest) },
                 )
@@ -165,7 +165,7 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
                     onBack = { nav.popBackStack() },
                     onLine = { nav.navigate(LineDest(it)) { popUpTo<SearchDest> { inclusive = true } } },
                     onStop = { nav.navigate(StopDest(it)) { popUpTo<SearchDest> { inclusive = true } } },
-                    onPlace = { nav.navigatePlanner(it) { popUpTo<SearchDest> { inclusive = true } } },
+                    onPlace = { nav.popBackStack(); planTo(it) },
                     onPlaceOnMap = { p -> nav.popBackStack(); rootVm.sendMapCommand(MapCommand.FocusPoint(p.point)) },
                 )
             }
@@ -197,9 +197,11 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
     }
 }
 
-private fun NavController.navigatePlanner(place: Place, builder: androidx.navigation.NavOptionsBuilder.() -> Unit = {}) {
-    navigate(PlannerDest(place.lat, place.lon, place.name)) {
+/** Switch tabs like the bottom bar does: one back stack per tab, Back from a tab returns to the map. */
+private fun NavController.navigateTab(route: Any) {
+    navigate(route) {
+        popUpTo(graph.findStartDestination().id) { saveState = true }
         launchSingleTop = true
-        builder()
+        restoreState = true
     }
 }

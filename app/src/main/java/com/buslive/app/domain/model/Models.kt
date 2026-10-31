@@ -88,9 +88,11 @@ data class LiveBus(
     val distanceFromStartM: Int?,
     val siriRideId: Long?,
     val line: Line?,
+    /** Label to show when [line] is unknown (e.g. the bus tracked during live directions). */
+    val labelOverride: String? = null,
 ) {
     val point get() = GeoPoint(lat, lon)
-    val shortName: String get() = line?.shortName ?: "?"
+    val shortName: String get() = line?.shortName ?: labelOverride ?: "?"
     fun ageSeconds(now: Instant = Instant.now()): Long = (now.epochSecond - recordedAt.epochSecond).coerceAtLeast(0)
 }
 

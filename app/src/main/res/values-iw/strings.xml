@@ -251,6 +251,15 @@
     <string name="alert_get_off_text">התחנה שלך %1$s היא הבאה (קו %2$s)</string>
     <string name="alert_arrived_title">הגעת 🎉</string>
     <string name="alert_arrived_text">הגעת אל %1$s</string>
+    <string name="bus_leaves_in">יוצא בעוד %1$s (%2$s)</string>
+    <string name="hurry_up">מהרו – בקצב הליכה רגיל אפשר לפספס את האוטובוס</string>
+    <string name="step_of">שלב %1$d מתוך %2$d</string>
+    <string name="then">אחר כך</string>
+    <string name="leave_in">יציאה בעוד %1$s</string>
+    <string name="leg_board_at_time">עלייה ב%1$s ב-%2$s</string>
+    <string name="recenter">מעקב אחרי המיקום שלי</string>
+    <string name="guidance_running">ניווט חי פועל</string>
+    <string name="open">פתיחה</string>
     <string name="live_directions">ניווט חי</string>
     <string name="share_trip">שיתוף הנסיעה</string>
     <string name="no_active_directions">אין ניווט פעיל. תכננו נסיעה והקישו התחלה, או הקישו 🔔 ליד תחנה.</string>

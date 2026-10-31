@@ -86,6 +86,8 @@ data class MapUiState(
     val userLocation: GeoPoint? = null,
     val initialCenter: GeoPoint? = null,
     val zoom: Double = 15.0,
+    /** Last camera, so coming back to the map tab keeps your place instead of jumping. */
+    val cameraCenter: GeoPoint? = null,
 )
 
 @HiltViewModel
@@ -107,6 +109,7 @@ class MapViewModel @Inject constructor(
     val online = connectivity.online
     val syncState = syncMonitor.state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SyncState.IDLE)
     val favoriteLineKeys = favorites.favoriteLineKeys.stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
+    val guidanceState = guidance.state
 
     private var bbox: BBox? = null
     private var fetchedBox: BBox? = null
@@ -243,7 +246,7 @@ class MapViewModel @Inject constructor(
     fun onCameraIdle(box: BBox, zoom: Double) {
         bbox = box
         val prevZoom = _state.value.zoom
-        _state.update { it.copy(zoom = zoom) }
+        _state.update { it.copy(zoom = zoom, cameraCenter = GeoPoint((box.south + box.north) / 2, (box.west + box.east) / 2)) }
         loadStops(box, zoom)
         val fetched = fetchedBox
         val crossedZoom = (prevZoom < MIN_BUS_ZOOM) != (zoom < MIN_BUS_ZOOM)

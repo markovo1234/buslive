@@ -246,6 +246,15 @@
     <string name="alert_get_off_text">Your stop %1$s is next (line %2$s)</string>
     <string name="alert_arrived_title">You have arrived 🎉</string>
     <string name="alert_arrived_text">You reached %1$s</string>
+    <string name="bus_leaves_in">Leaves in %1$s (%2$s)</string>
+    <string name="hurry_up">Hurry up – you may miss this bus at walking speed</string>
+    <string name="step_of">Step %1$d of %2$d</string>
+    <string name="then">Then</string>
+    <string name="leave_in">Leave in %1$s</string>
+    <string name="leg_board_at_time">board at %1$s at %2$s</string>
+    <string name="recenter">Follow my location</string>
+    <string name="guidance_running">Live directions running</string>
+    <string name="open">Open</string>
     <string name="live_directions">Live directions</string>
     <string name="share_trip">Share my trip</string>
     <string name="no_active_directions">No live directions running. Plan a trip and tap Start, or tap 🔔 next to a stop.</string>

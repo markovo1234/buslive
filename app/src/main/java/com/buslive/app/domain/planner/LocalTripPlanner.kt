@@ -29,20 +29,37 @@ class LocalTripPlanner @Inject constructor(
 
     private data class Board(val stop: Stop, val walkM: Double, val arrival: Arrival)
 
-    override suspend fun plan(from: GeoPoint, to: GeoPoint, departAt: Instant): List<TripOption> = coroutineScope {
+    /** First a normal search; if no bus is found, a second, wider one (more walking, longer wait). */
+    override suspend fun plan(from: GeoPoint, to: GeoPoint, departAt: Instant): List<TripOption> {
+        val first = catching { planOnce(from, to, departAt, WALK_RADIUS_M, ORIGIN_WINDOW, 8) }
+        val found = first.getOrNull().orEmpty()
+        if (found.any { it.busLegs.isNotEmpty() }) return found
+        val wide = catching { planOnce(from, to, departAt, WIDE_WALK_RADIUS_M, WIDE_ORIGIN_WINDOW, 14) }
+        val wider = wide.getOrNull().orEmpty()
+        return when {
+            wider.any { it.busLegs.isNotEmpty() } -> wider
+            found.isNotEmpty() -> found
+            wider.isNotEmpty() -> wider
+            else -> throw first.exceptionOrNull() ?: wide.exceptionOrNull() ?: NoServiceException()
+        }
+    }
+
+    private suspend fun planOnce(
+        from: GeoPoint, to: GeoPoint, departAt: Instant, radiusM: Double, originWindow: Duration, stopCount: Int,
+    ): List<TripOption> = coroutineScope {
         val options = mutableListOf<TripOption>()
         val straight = Geo.distanceM(from, to)
         if (straight <= WALK_ONLY_MAX_M) options += walkOnly(from, to, departAt)
         if (straight < 250) return@coroutineScope options
 
-        val originStops = static.nearestStops(from, 8, WALK_RADIUS_M)
-        val destStops = static.nearestStops(to, 8, WALK_RADIUS_M)
+        val originStops = static.nearestStops(from, stopCount, radiusM)
+        val destStops = static.nearestStops(to, stopCount, radiusM)
         if (originStops.isEmpty() || destStops.isEmpty()) return@coroutineScope options
 
         val originBoards = originStops.map { (stop, d) ->
             async {
                 val earliest = departAt.plusSeconds(Geo.walkSeconds(d))
-                runCatching { schedule.arrivals(stop.code, from = earliest, to = departAt.plus(ORIGIN_WINDOW)) }
+                runCatching { schedule.arrivals(stop.code, from = earliest, to = departAt.plus(originWindow)) }
                     .getOrDefault(emptyList())
                     .map { Board(stop, d, it) }
             }
@@ -214,8 +231,18 @@ class LocalTripPlanner @Inject constructor(
 
     class NoServiceException : Exception("no service")
 
+    private inline fun <T> catching(block: () -> T): Result<T> = try {
+        Result.success(block())
+    } catch (e: kotlinx.coroutines.CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     companion object {
         const val WALK_RADIUS_M = 750.0
+        const val WIDE_WALK_RADIUS_M = 1_300.0
+        val WIDE_ORIGIN_WINDOW: Duration = Duration.ofMinutes(150)
         const val WALK_ONLY_MAX_M = 1_500.0
         const val TRANSFER_RADIUS_M = 200.0
         const val TRANSFER_BUFFER_S = 120L

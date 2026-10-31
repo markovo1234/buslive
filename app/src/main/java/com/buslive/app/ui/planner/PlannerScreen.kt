@@ -96,6 +96,7 @@ fun PlannerScreen(
     val state by vm.state.collectAsStateWithLifecycle()
     val saved by vm.savedPlaces.collectAsStateWithLifecycle()
     val recents by vm.recentTrips.collectAsStateWithLifecycle()
+    val guidanceActive = vm.guidanceState.collectAsStateWithLifecycle().value != null
     var picking by rememberSaveable { mutableStateOf<String?>(null) } // "from" | "to"
     var showTime by remember { mutableStateOf(false) }
     var pendingStart by remember { mutableStateOf<TripOption?>(null) }
@@ -113,8 +114,8 @@ fun PlannerScreen(
     LaunchedEffect(initialTo) { vm.applyInitialDestination(initialTo) }
 
     Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.plan_title)) }) }) { padding ->
-        LazyColumn(Modifier.padding(padding).fillMaxSize()) {
-            item {
+        Column(Modifier.padding(padding).fillMaxSize()) {
+                if (guidanceActive) com.buslive.app.ui.map.GuidanceBanner(onClick = onStartGuidance)
                 EndpointsCard(
                     fromLabel = when (val f = state.from) {
                         Endpoint.MyLocation -> stringResource(R.string.my_location)
@@ -125,8 +126,6 @@ fun PlannerScreen(
                     onTo = { picking = "to" },
                     onSwap = vm::swap,
                 )
-            }
-            item {
                 Row(
                     Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -140,14 +139,14 @@ fun PlannerScreen(
                     )
                     if (state.departAt != null) TextButton(onClick = { vm.setDepartAt(null) }) { Text(stringResource(R.string.leave_now)) }
                 }
-            }
-            if (state.loading) item {
-                Column(Modifier.padding(16.dp)) {
+                if (state.loading) Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                     LinearProgressIndicator(Modifier.fillMaxWidth())
                     Spacer(Modifier.height(6.dp))
                     Text(stringResource(R.string.planning), style = MaterialTheme.typography.bodySmall)
                 }
-            }
+                // Map stays on top while the options scroll below it.
+                if (state.options.isNotEmpty() && state.to != null) TripPreviewMap(state.selected)
+        LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
             when {
                 state.to == null -> {
                     if (recents.isNotEmpty()) {
@@ -185,7 +184,6 @@ fun PlannerScreen(
                     }
                 }
                 state.options.isNotEmpty() -> {
-                    item { TripPreviewMap(state.selected) }
                     item {
                         Text(
                             stringResource(
@@ -204,6 +202,8 @@ fun PlannerScreen(
                         TripCard(
                             option = o,
                             selected = o.id == state.selectedId,
+                            tracked = state.live.containsKey(o.id),
+                            live = state.live[o.id],
                             onClick = { vm.select(o.id) },
                             onStart = {
                                 pendingStart = o
@@ -220,6 +220,7 @@ fun PlannerScreen(
                     item { Spacer(Modifier.height(24.dp)) }
                 }
             }
+        }
         }
     }
 
@@ -325,7 +326,15 @@ private fun TripPreviewMap(option: TripOption?) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun TripCard(option: TripOption, selected: Boolean, onClick: () -> Unit, onStart: () -> Unit) {
+private fun TripCard(
+    option: TripOption,
+    selected: Boolean,
+    tracked: Boolean,
+    live: com.buslive.app.domain.model.LiveEstimate?,
+    onClick: () -> Unit,
+    onStart: () -> Unit,
+) {
+    val now by com.buslive.app.ui.common.rememberNow(15_000)
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp).clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
@@ -350,6 +359,27 @@ private fun TripCard(option: TripOption, selected: Boolean, onClick: () -> Unit,
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                 )
+            }
+            // When to leave + is the first bus already driving?
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.leave_in, com.buslive.app.ui.common.minutesText(option.departure, now)),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                if (tracked) {
+                    Spacer(Modifier.width(8.dp))
+                    com.buslive.app.ui.common.LiveTag(estimate = live != null)
+                    live?.let {
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            stringResource(R.string.bus_at, TimeUtil.formatTime(it.eta)),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = com.buslive.app.ui.theme.liveColor(),
+                        )
+                    }
+                }
             }
             Spacer(Modifier.height(6.dp))
             FlowRow(verticalArrangement = Arrangement.Center, horizontalArrangement = Arrangement.spacedBy(2.dp)) {

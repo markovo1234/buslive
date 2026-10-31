@@ -4,6 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.buslive.app.data.db.RecentTripEntity
 import com.buslive.app.data.repo.FavoritesRepository
+import com.buslive.app.data.repo.LiveRepository
+import com.buslive.app.domain.ArrivalEstimator
+import com.buslive.app.domain.model.Arrival
+import com.buslive.app.domain.model.LiveEstimate
 import com.buslive.app.data.repo.LocationRepository
 import com.buslive.app.data.repo.ScheduleRepository
 import com.buslive.app.domain.model.AppError
@@ -49,6 +53,8 @@ data class PlannerState(
     val usedOtp: Boolean = false,
     val otpFellBack: Boolean = false,
     val searched: Boolean = false,
+    /** Option id → live estimate of its first bus at the boarding stop (null value = bus tracked, no ETA). */
+    val live: Map<String, LiveEstimate?> = emptyMap(),
 ) {
     val selected: TripOption? get() = options.firstOrNull { it.id == selectedId }
 }
@@ -60,6 +66,8 @@ class PlannerViewModel @Inject constructor(
     private val favorites: FavoritesRepository,
     private val schedule: ScheduleRepository,
     private val guidance: GuidanceManager,
+    private val liveRepo: LiveRepository,
+    commands: PlannerCommands,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PlannerState())
@@ -71,8 +79,15 @@ class PlannerViewModel @Inject constructor(
     val recentTrips: StateFlow<List<RecentTripEntity>> =
         favorites.recentTrips.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val guidanceState = guidance.state
+
     private var planJob: Job? = null
+    private var liveJob: Job? = null
     private var appliedInitial: Place? = null
+
+    init {
+        viewModelScope.launch { commands.destinations.collect { setTo(it) } }
+    }
 
     fun applyInitialDestination(p: Place?) {
         if (p == null || p == appliedInitial) return
@@ -119,7 +134,7 @@ class PlannerViewModel @Inject constructor(
         val to = s.to ?: return
         planJob?.cancel()
         planJob = viewModelScope.launch {
-            _state.update { it.copy(loading = true, error = null, noService = false, needsLocation = false, searched = true) }
+            _state.update { it.copy(loading = true, error = null, noService = false, needsLocation = false, searched = true, live = emptyMap()) }
             val fromPoint: GeoPoint = when (val f = s.from) {
                 is Endpoint.Fixed -> f.place.point
                 Endpoint.MyLocation -> location.current() ?: run {
@@ -145,6 +160,7 @@ class PlannerViewModel @Inject constructor(
                     )
                 }
                 options.firstOrNull()?.let { fillStops(it.id) }
+                trackLive()
                 val fromName = (s.from as? Endpoint.Fixed)?.place?.name.orEmpty()
                 favorites.addRecentTrip(fromName, (s.from as? Endpoint.Fixed)?.place, to)
             }.onFailure { e ->
@@ -176,6 +192,34 @@ class PlannerViewModel @Inject constructor(
         }
         _state.update { s ->
             s.copy(options = s.options.map { if (it.id == id) it.copy(legs = legs) else it })
+        }
+    }
+
+    /** Is the first bus of each option already driving? (one small call per line, max 5 lines) */
+    private fun trackLive() {
+        liveJob?.cancel()
+        liveJob = viewModelScope.launch {
+            val firsts = _state.value.options.take(6).mapNotNull { o -> o.busLegs.firstOrNull()?.let { o.id to it } }
+            val byLine = firsts.mapNotNull { it.second.lineRef }.distinct().take(5)
+            val buses = byLine.flatMap { ref -> appRunCatching { liveRepo.busesForLine(ref) }.getOrDefault(emptyList()) }
+            val now = Instant.now()
+            val result = HashMap<String, LiveEstimate?>()
+            for ((id, leg) in firsts) {
+                val bus = buses.firstOrNull { it.lineRef == leg.lineRef && it.scheduledStart != null && it.scheduledStart == leg.rideStart }
+                    ?: continue
+                val opt = _state.value.options.firstOrNull { it.id == id }
+                val boarding = (opt?.busLegs?.firstOrNull() ?: leg).stops.firstOrNull()
+                result[id] = ArrivalEstimator.estimate(
+                    Arrival(
+                        lineRef = bus.lineRef, shortName = leg.shortName, operatorRef = leg.operatorRef, agencyName = "",
+                        destination = leg.headsign, rideId = leg.rideId ?: 0, routeId = 0,
+                        rideStart = leg.rideStart ?: leg.start, planned = leg.start,
+                        stopSequence = boarding?.sequence ?: 0, shapeDistM = boarding?.shapeDistM,
+                    ),
+                    bus, now,
+                )
+            }
+            _state.update { it.copy(live = result) }
         }
     }
 

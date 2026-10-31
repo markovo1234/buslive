@@ -30,6 +30,7 @@ import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOff
 import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material.icons.outlined.Navigation
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
@@ -173,16 +174,21 @@ fun MapScreen(
         c.setPin((sel as? MapSelection.Pin)?.point)
     }
 
-    BackHandler(enabled = state.selection != null) { vm.clearSelection() }
+    val guidance by vm.guidanceState.collectAsStateWithLifecycle()
+    // Back closes a sheet first, then a selected line, then leaves the app.
+    BackHandler(enabled = state.selection != null || state.filter == BusFilter.LINE) {
+        if (state.selection != null) vm.clearSelection() else vm.clearLine()
+    }
 
-    val initial = state.initialCenter
+    val initial = state.cameraCenter ?: state.initialCenter
+    val initialZoom = if (state.cameraCenter != null) state.zoom else 15.0
     // Home = 2/3 live map + 1/3 stops around you.
     Column(Modifier.fillMaxSize()) {
     Box(Modifier.fillMaxWidth().weight(2f)) {
         if (initial != null) {
             BusMapView(
                 initialCenter = initial,
-                initialZoom = 15.0,
+                initialZoom = initialZoom,
                 onControllerReady = { controller = it },
                 modifier = Modifier.fillMaxSize(),
                 topInset = 132.dp,
@@ -208,6 +214,7 @@ fun MapScreen(
             if (!online) OfflineBanner()
             if (sync == SyncState.RUNNING) InfoBanner(stringResource(R.string.syncing_data), progress = true)
             if (sync == SyncState.FAILED) InfoBanner(stringResource(R.string.sync_failed))
+            if (guidance != null) GuidanceBanner(onClick = nav.openGuidance)
             SearchPill(onClick = nav.openSearch, onSettings = nav.openSettings)
             Row(
                 Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp),
@@ -372,6 +379,24 @@ private fun SearchPill(onClick: () -> Unit, onSettings: () -> Unit) {
                 overflow = TextOverflow.Ellipsis,
             )
             IconButton(onClick = onSettings) { Icon(Icons.Outlined.Settings, stringResource(R.string.settings)) }
+        }
+    }
+}
+
+/** Shown on top of the map while live directions run in the background. */
+@Composable
+fun GuidanceBanner(onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        color = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(Modifier.padding(horizontal = 16.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Outlined.Navigation, null, Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.guidance_running), style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.open), style = MaterialTheme.typography.labelLarge)
         }
     }
 }

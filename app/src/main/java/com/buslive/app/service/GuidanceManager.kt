@@ -137,6 +137,9 @@ class GuidanceManager @Inject constructor(
     // ------------------------------------------------------------------ engine (called by the service)
 
     suspend fun run() = coroutineScope {
+        // Show something right away: last known fix, then fill the stop lists.
+        location.last.value?.let { onLocation(it) }
+        launch { location.current() }
         fillMissingStops()
         val gpsJob = launch {
             gps.collectLatest { cfg ->
@@ -238,7 +241,10 @@ class GuidanceManager @Inject constructor(
         return s.copy(
             legIndex = nextIndex,
             phase = if (nextLeg is TripLeg.Bus) GuidancePhase.WAIT else GuidancePhase.WALK,
-            stopsLeft = null, busEstimate = null, busPosition = null,
+            stopsLeft = null,
+            // Keep the tracked bus when we just walked to its stop.
+            busEstimate = if (nextLeg is TripLeg.Bus) s.busEstimate else null,
+            busPosition = if (nextLeg is TripLeg.Bus) s.busPosition else null,
             readyAlerted = false, getOffAlerted = false,
         )
     }
@@ -246,8 +252,13 @@ class GuidanceManager @Inject constructor(
     /** Live position of the bus we wait for (same line + same planned start). */
     private suspend fun pollBus() {
         val s = _state.value ?: return
-        val leg = s.leg as? TripLeg.Bus ?: return
-        if (s.phase != GuidancePhase.WAIT || leg.lineRef == null) return
+        // While waiting, or while walking to the stop, track the bus we are going to take.
+        val leg = when {
+            s.phase == GuidancePhase.WAIT -> s.leg as? TripLeg.Bus
+            s.phase == GuidancePhase.WALK -> s.trip.legs.getOrNull(s.legIndex + 1) as? TripLeg.Bus
+            else -> null
+        } ?: return _state.update { it?.copy(busEstimate = null, busPosition = null) }
+        if (leg.lineRef == null) return
         val buses = live.busesForLine(leg.lineRef)
         val match = buses.firstOrNull { it.scheduledStart != null && it.scheduledStart == leg.rideStart }
             ?: return _state.update { it?.copy(busEstimate = null, busPosition = null) }
