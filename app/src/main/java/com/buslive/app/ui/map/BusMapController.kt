@@ -150,7 +150,7 @@ class BusMapController(
         // Route of the selected line.
         style.addLayer(
             LineLayer(L_ROUTE, SRC_ROUTE).withProperties(
-                lineColor(get("color")),
+                lineColor(Expression.toColor(get("color"))),
                 lineWidth(interpolate(linear(), zoom(), stop(10, 3f), stop(16, 7f))),
                 lineJoin(Property.LINE_JOIN_ROUND),
                 lineCap(Property.LINE_CAP_ROUND),
@@ -160,7 +160,7 @@ class BusMapController(
         // Trip planner preview (bus = solid, walk = dashed).
         style.addLayer(
             LineLayer(L_TRIP_BUS, SRC_TRIP).withFilter(Expression.eq(get("kind"), literal("bus"))).withProperties(
-                lineColor(get("color")),
+                lineColor(Expression.toColor(get("color"))),
                 lineWidth(6f),
                 lineJoin(Property.LINE_JOIN_ROUND),
                 lineCap(Property.LINE_CAP_ROUND),
@@ -178,7 +178,7 @@ class BusMapController(
             CircleLayer(L_ROUTE_STOPS, SRC_ROUTE_STOPS).withProperties(
                 circleRadius(interpolate(linear(), zoom(), stop(11, 2.5f), stop(16, 6f))),
                 circleColor(stopFill),
-                circleStrokeColor(get("color")),
+                circleStrokeColor(Expression.toColor(get("color"))),
                 circleStrokeWidth(2.5f),
             )
         )
@@ -229,7 +229,7 @@ class BusMapController(
                 .withFilter(Expression.eq(get("code"), literal(-1)))
                 .withProperties(
                     circleRadius(11f),
-                    circleColor("#00000000"),
+                    circleColor("rgba(0,0,0,0)"),
                     circleStrokeColor("#E65100"),
                     circleStrokeWidth(3.5f),
                 )
@@ -257,7 +257,7 @@ class BusMapController(
                 .withFilter(Expression.eq(get("id"), literal("")))
                 .withProperties(
                     circleRadius(interpolate(linear(), zoom(), stop(10, 14f), stop(16, 22f))),
-                    circleColor("#00000000"),
+                    circleColor("rgba(0,0,0,0)"),
                     circleStrokeColor("#E65100"),
                     circleStrokeWidth(3.5f),
                 )
@@ -265,7 +265,7 @@ class BusMapController(
         style.addLayer(
             SymbolLayer(L_BUS, SRC_BUSES).withProperties(
                 iconImage(IMG_BUS),
-                iconColor(get("color")),
+                iconColor(Expression.toColor(get("color"))),
                 iconRotate(get("bearing")),
                 iconRotationAlignment(Property.ICON_ROTATION_ALIGNMENT_MAP),
                 iconSize(interpolate(linear(), zoom(), stop(9, 0.5f), stop(13, 0.8f), stop(16, 1.0f))),

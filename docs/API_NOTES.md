@@ -37,7 +37,7 @@ Findings:
 
 ### `/gtfs_stops/list?date_from=D&date_to=D`
 * 26,351 rows for one day, but **stop `code` repeats** (same stop duplicated with different `id`s, e.g. central stations). App dedupes by `code`.
-* Fetched in pages of 10,000 (`limit` + `offset`, `order_by=id asc`). 10k rows ≈ 1.4 MB / 3.4 s.
+* Fetched in pages of 10,000 (`limit` + `offset`). 10k rows ≈ 1.4 MB / 3.4 s. `order_by` is ignored here (always id desc), but the order is stable, so offset paging returns all 26,351 rows with no duplicates (checked).
 
 ### `/gtfs_routes/list?date_from=D&date_to=D`
 * ~3,000–5,200 rows/day, `line_ref` unique per day. One call with `limit=6000`.
@@ -70,6 +70,11 @@ For a stop S and a live bus on ride R (matched by line_ref + scheduled start):
 `planned_speed = shape_dist_traveled(S) / (planned_arrival(S) - ride_start)`;
 `eta = recorded_at_time + remaining_m / planned_speed` (bus velocity used only when moving and plausible).
 Shown with a "LIVE · estimate" tag. If `remaining_m < 0` the bus already passed.
+
+## Data saver
+
+`/siri_snapshots/list?limit=3&order_by=id desc` (~1.4 KB) shows the newest SIRI snapshot and its `etl_status`.
+The map polls this every 15 s and downloads positions only when a new snapshot is `loaded` or the view/filter changed.
 
 ## Nominatim (place search)
 

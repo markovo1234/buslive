@@ -1,0 +1,50 @@
+name: Build APK
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      # GitHub's Ubuntu runners ship the Android SDK with licenses accepted;
+      # AGP downloads the missing platform (API 37) and build-tools on first use.
+      - name: Unit tests
+        run: ./gradlew --no-daemon testDebugUnitTest
+
+      - name: Build debug APK
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Build release APKs (minified, one per CPU type)
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: buslive-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Upload release APKs
+        uses: actions/upload-artifact@v7
+        with:
+          name: buslive-release-apks
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error

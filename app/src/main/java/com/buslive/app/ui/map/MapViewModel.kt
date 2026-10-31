@@ -144,6 +144,7 @@ class MapViewModel @Inject constructor(
             syncMonitor.state.collect { s ->
                 if (s == SyncState.IDLE) {
                     bbox?.let { loadStops(it, _state.value.zoom) }
+                    forceNext = true
                     refreshRequests.trySend(Unit)
                 }
             }
@@ -161,11 +162,34 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    fun refreshNow() { refreshRequests.trySend(Unit) }
+    fun refreshNow() {
+        forceNext = true
+        refreshRequests.trySend(Unit)
+    }
+
+    private var lastFetchKey: Any? = null
+    private var lastSnapshot: Long? = null
+    @Volatile private var forceNext = false
 
     private suspend fun refreshBuses() {
         val s = _state.value
         val box = bbox ?: return
+        // Data saver: SIRI only changes about once a minute. If nothing about the query changed and no new
+        // snapshot is loaded on the server, skip the (large) positions download.
+        val bboxMode = s.filter != BusFilter.LINE && s.zoom >= MIN_BUS_ZOOM
+        val covered = !bboxMode || fetchedBox?.let { fb ->
+            fb.contains(GeoPoint(box.south, box.west)) && fb.contains(GeoPoint(box.north, box.east))
+        } == true
+        val key = Triple(s.filter, s.selectedLine?.siblings?.map { it.lineRef }, bboxMode)
+        val snapshot = live.latestSnapshotId()
+        val force = forceNext
+        forceNext = false
+        if (!force && covered && key == lastFetchKey && snapshot != null && snapshot == lastSnapshot &&
+            s.busError == null && s.lastUpdated != null
+        ) {
+            _state.update { it.copy(lastUpdated = Instant.now()) }
+            return
+        }
         _state.update { it.copy(loadingBuses = true) }
         val result = appRunCatching {
             when {
@@ -186,6 +210,8 @@ class MapViewModel @Inject constructor(
             }
         }
         result.onSuccess { buses ->
+            lastSnapshot = snapshot
+            lastFetchKey = key
             _state.update {
                 it.copy(
                     buses = buses ?: emptyList(),

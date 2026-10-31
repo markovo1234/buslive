@@ -24,6 +24,7 @@
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.BusLive"
+        tools:ignore="UnusedTranslation"
         tools:targetApi="34">
 
         <activity

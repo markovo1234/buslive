@@ -23,6 +23,13 @@ interface StrideApi {
         @Query("order_by") orderBy: String? = null,
     ): List<VehicleLocationDto>
 
+    /** Tiny call (~1 KB) used to skip re-downloading bus positions when no new SIRI snapshot was loaded. */
+    @GET("siri_snapshots/list")
+    suspend fun snapshots(
+        @Query("limit") limit: Int = 3,
+        @Query("order_by") orderBy: String = "id desc",
+    ): List<SiriSnapshotDto>
+
     @GET("gtfs_stops/list")
     suspend fun stops(
         @Query("date_from") dateFrom: String,

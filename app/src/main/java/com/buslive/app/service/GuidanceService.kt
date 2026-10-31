@@ -1,13 +1,16 @@
 package com.buslive.app.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.buslive.app.MainActivity
@@ -52,9 +55,7 @@ class GuidanceService : LifecycleService() {
         if (engineJob?.isActive != true) {
             engineJob = lifecycleScope.launch {
                 launch {
-                    manager.state.filterNotNull().collect { s ->
-                        runCatching { NotificationManagerCompat.from(this@GuidanceService).notify(Notifications.ID_GUIDANCE, buildNotification(s)) }
-                    }
+                    manager.state.filterNotNull().collect { s -> updateNotification(s) }
                 }
                 manager.run()
                 manager.stop()
@@ -62,6 +63,17 @@ class GuidanceService : LifecycleService() {
             }
         }
         return START_NOT_STICKY
+    }
+
+    private fun updateNotification(s: GuidanceState) {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) return
+        try {
+            NotificationManagerCompat.from(this).notify(Notifications.ID_GUIDANCE, buildNotification(s))
+        } catch (_: SecurityException) {
+            // Permission revoked while running.
+        }
     }
 
     override fun onDestroy() {

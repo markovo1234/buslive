@@ -43,6 +43,17 @@ android {
         buildConfig = true
     }
 
+    // Release only: one small APK per CPU type (+ a universal one). Debug stays a single app-debug.apk.
+    val releaseBuild = gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
+    splits {
+        abi {
+            isEnable = releaseBuild
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+            isUniversalApk = true
+        }
+    }
+
     packaging {
         resources.excludes += setOf("/META-INF/{AL2.0,LGPL2.1}", "/META-INF/*.kotlin_module")
     }

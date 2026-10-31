@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
     <!-- Public APIs are HTTPS. Clear text is allowed only so a self-hosted OpenTripPlanner
          server (Settings → OTP URL, often plain http on a home server) can be used. -->
-    <base-config cleartextTrafficPermitted="true">
+    <base-config cleartextTrafficPermitted="true" tools:ignore="InsecureBaseConfiguration">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

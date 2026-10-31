@@ -62,6 +62,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -159,7 +160,7 @@ fun PlannerScreen(
                                 Icon(Icons.Outlined.History, null)
                                 Spacer(Modifier.width(16.dp))
                                 Text(
-                                    (r.fromName.ifBlank { stringResource(R.string.my_location) }) + " → " + r.toName,
+                                    stringResource(R.string.from_to, r.fromName.ifBlank { stringResource(R.string.my_location) }, r.toName),
                                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                                 )
                             }
@@ -340,12 +341,12 @@ private fun TripCard(option: TripOption, selected: Boolean, onClick: () -> Unit,
                 )
                 Spacer(Modifier.width(12.dp))
                 Text(
-                    TimeUtil.formatTime(option.departure) + " → " + TimeUtil.formatTime(option.arrival),
+                    stringResource(R.string.from_to, TimeUtil.formatTime(option.departure), TimeUtil.formatTime(option.arrival)),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f),
                 )
                 if (option.transfers > 0) Text(
-                    stringResource(R.string.transfers, option.transfers),
+                    pluralStringResource(R.plurals.transfers, option.transfers, option.transfers),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.tertiary,
                 )

@@ -31,6 +31,10 @@ class LiveRepository @Inject constructor(
         return toBuses(rows, now)
     }
 
+    /** Id of the newest fully loaded SIRI snapshot (null if unknown). */
+    suspend fun latestSnapshotId(): Long? =
+        runCatching { api.snapshots().firstOrNull { it.etlStatus == "loaded" }?.id }.getOrNull()
+
     suspend fun busesForLine(lineRef: Long): List<LiveBus> {
         val now = Instant.now()
         val rows = api.vehicleLocations(

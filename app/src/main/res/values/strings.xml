@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">BusLive</string>
 
     <!-- Notification channels -->
@@ -30,7 +30,7 @@
     <string name="not_now">Not now</string>
     <string name="settings">Settings</string>
     <string name="now">now</string>
-    <string name="ago_seconds">%1$d sec ago</string>
+    <string name="ago_seconds" tools:ignore="PluralsCandidate">%1$d sec ago</string>
     <string name="ago_minutes">%1$d min ago</string>
     <string name="hours_minutes">%1$d h %2$d min</string>
     <plurals name="minutes_short">
@@ -49,7 +49,7 @@
     <!-- Live -->
     <string name="live">LIVE</string>
     <string name="live_estimate">LIVE · estimate</string>
-    <string name="live_buses_count">%1$d live buses</string>
+    <string name="live_buses_count">Live buses: %1$d</string>
     <string name="loading_buses">Loading live buses…</string>
     <string name="zoom_in_for_buses">Zoom in to see live buses</string>
     <string name="stale_position">old position</string>
@@ -70,6 +70,7 @@
     <string name="filter_all">All buses</string>
     <string name="filter_favorites">My lines</string>
     <string name="line_to">%1$s → %2$s</string>
+    <string name="from_to">%1$s → %2$s</string>
     <string name="clear_line">Clear line</string>
     <string name="my_location">My location</string>
     <string name="location_rationale_title">Show buses around you?</string>
@@ -172,13 +173,49 @@
     <string name="planner_otp">Planned by your OpenTripPlanner server.</string>
     <string name="planner_otp_failed">OpenTripPlanner server did not answer, used the built-in planner.</string>
     <string name="minutes_total">%1$d min</string>
-    <string name="transfers">%1$d transfer</string>
-    <string name="trip_breakdown">Walk %1$d min · Wait %2$d min · Ride %3$d min · %4$d stops</string>
+    <plurals name="transfers">
+        <item quantity="one">%1$d transfer</item>
+        <item quantity="other">%1$d transfers</item>
+    </plurals>
+    <string name="trip_breakdown" tools:ignore="PluralsCandidate">Walk %1$d min · Wait %2$d min · Ride %3$d min · %4$d stops</string>
     <string name="start">Start live directions</string>
     <string name="destination">destination</string>
     <string name="leg_walk">Walk %1$s to %2$s</string>
     <string name="leg_board">Board at %1$s toward %2$s</string>
-    <string name="leg_ride">Ride %1$d stops, get off at %2$s (%3$s)</string>
+    <string name="leg_ride" tools:ignore="PluralsCandidate">Ride %1$d stops, get off at %2$s (%3$s)</string>
+
+    <!-- Settings -->
+    <string name="language">Language</string>
+    <string name="follow_system">Follow system</string>
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="offline_data">Offline data</string>
+    <string name="stops_synced">Stops and lines saved for %1$s (updated %2$s). Refreshed daily in the background.</string>
+    <string name="stops_not_synced">Stops and lines not downloaded yet.</string>
+    <string name="refresh_stops_now">Refresh now</string>
+    <string name="syncing_short">Downloading…</string>
+    <string name="sync_failed_short">Failed, will retry</string>
+    <string name="offline_map_desc">Download the map around you (about 9 km, zoom 10–15) to use it without internet.</string>
+    <string name="offline_progress">%1$d%% · %2$d MB</string>
+    <string name="offline_done">Map saved for offline use (%1$d MB)</string>
+    <string name="offline_error">Map download problem: %1$s</string>
+    <string name="download_my_area">Download my area</string>
+    <string name="delete_offline_map">Delete offline map</string>
+    <string name="otp_title">Trip planner server (optional)</string>
+    <string name="otp_desc">If you run OpenTripPlanner 2 (for example on your own Ubuntu server with Israel GTFS), enter its base URL. BusLive will use it for trip planning and fall back to the built-in planner if it does not answer.</string>
+    <string name="otp_url">OTP base URL</string>
+    <string name="save">Save</string>
+    <string name="test">Test</string>
+    <string name="otp_testing">Testing…</string>
+    <string name="otp_ok" tools:ignore="PluralsCandidate">Server works (%1$d trip options for a sample trip)</string>
+    <string name="otp_failed">Server not reachable: %1$s</string>
+    <string name="otp_using_builtin">Using the built-in planner.</string>
+    <string name="otp_using">Using OpenTripPlanner at %1$s</string>
+    <string name="about">About</string>
+    <string name="about_text">BusLive shows live Israeli bus positions, arrivals and trip plans. Fast, light, no ads.</string>
+    <string name="privacy_text">Privacy: no accounts, no ads, no analytics, no tracking. Your location and favorites stay on this phone.</string>
+    <string name="credits_text">Bus data: Open Bus Stride API by the Public Knowledge Workshop (Hasadna), from Israel Ministry of Transport GTFS and SIRI. Map: OpenFreeMap, © OpenMapTiles, © OpenStreetMap contributors. Place search: Nominatim / OpenStreetMap.</string>
 
     <!-- Near me -->
     <string name="nearby_needs_location">Allow location to see the stops around you.</string>

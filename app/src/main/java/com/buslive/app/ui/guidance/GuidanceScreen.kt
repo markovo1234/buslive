@@ -88,6 +88,7 @@ class GuidanceViewModel @Inject constructor(private val manager: GuidanceManager
 fun GuidanceScreen(onBack: () -> Unit, vm: GuidanceViewModel = hiltViewModel()) {
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val shareTitle = stringResource(R.string.share_trip)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -99,7 +100,7 @@ fun GuidanceScreen(onBack: () -> Unit, vm: GuidanceViewModel = hiltViewModel()) 
                     if (state != null) IconButton(onClick = {
                         vm.shareText()?.let { text ->
                             val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
-                            context.startActivity(Intent.createChooser(send, context.getString(R.string.share_trip)))
+                            context.startActivity(Intent.createChooser(send, shareTitle))
                         }
                     }) { Icon(Icons.Outlined.Share, stringResource(R.string.share_trip)) }
                 },
@@ -122,7 +123,7 @@ fun GuidanceScreen(onBack: () -> Unit, vm: GuidanceViewModel = hiltViewModel()) 
                     OutlinedButton(onClick = {
                         vm.shareText()?.let { text ->
                             val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
-                            context.startActivity(Intent.createChooser(send, context.getString(R.string.share_trip)))
+                            context.startActivity(Intent.createChooser(send, shareTitle))
                         }
                     }, modifier = Modifier.weight(1f)) {
                         Icon(Icons.Outlined.Share, null, Modifier.size(18.dp))

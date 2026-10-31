@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">BusLive</string>
+
+    <!-- Notification channels -->
+    <string name="channel_guidance">ניווט חי</string>
+    <string name="channel_guidance_desc">התראה קבועה בזמן ניווט חי</string>
+    <string name="channel_alerts">התראות ירידה</string>
+    <string name="channel_alerts_desc">התראות חזקות: להתכונן, לרדת עכשיו</string>
+    <string name="channel_reminders">תזכורות הגעה</string>
+    <string name="channel_reminders_desc">תזכורת לפני שהאוטובוס מגיע לתחנה שלך</string>
+
+    <!-- Widget -->
+    <string name="widget_name">האוטובוסים הבאים</string>
+    <string name="widget_description">ההגעות הבאות לתחנה מועדפת</string>
+
+    <!-- Tabs -->
+    <string name="tab_map">מפה</string>
+    <string name="tab_nearby">לידי</string>
+    <string name="tab_plan">תכנון</string>
+    <string name="tab_favorites">מועדפים</string>
+
+    <!-- Common -->
+    <string name="ok">אישור</string>
+    <string name="retry">נסו שוב</string>
+    <string name="tap_to_retry">הקישו לנסות שוב</string>
+    <string name="close">סגירה</string>
+    <string name="back">חזרה</string>
+    <string name="allow">אישור</string>
+    <string name="not_now">לא עכשיו</string>
+    <string name="settings">הגדרות</string>
+    <string name="now">עכשיו</string>
+    <string name="ago_seconds" tools:ignore="PluralsCandidate">לפני %1$d שנ׳</string>
+    <string name="ago_minutes">לפני %1$d דק׳</string>
+    <string name="hours_minutes">%1$d שע׳ %2$d דק׳</string>
+    <plurals name="minutes_short">
+        <item quantity="one">דקה</item>
+        <item quantity="two">%1$d דק׳</item>
+        <item quantity="other">%1$d דק׳</item>
+    </plurals>
+    <string name="updated_ago">עודכן %1$s</string>
+    <string name="gps_age">GPS %1$s</string>
+    <string name="planned_at">מתוכנן %1$s</string>
+    <string name="then_at">אחר כך %1$s</string>
+    <string name="to_destination">אל %1$s</string>
+    <string name="cd_line">קו %1$s</string>
+    <string name="cd_favorite">הוספה למועדפים</string>
+    <string name="cd_unfavorite">הסרה מהמועדפים</string>
+
+    <!-- Live -->
+    <string name="live">חי</string>
+    <string name="live_estimate">חי · הערכה</string>
+    <string name="live_buses_count">אוטובוסים בזמן אמת: %1$d</string>
+    <string name="loading_buses">טוען אוטובוסים בזמן אמת…</string>
+    <string name="zoom_in_for_buses">התקרבו במפה כדי לראות אוטובוסים</string>
+    <string name="stale_position">מיקום ישן</string>
+    <string name="speed_kmh">%1$d קמ״ש</string>
+    <string name="vehicle">אוטובוס %1$s</string>
+
+    <!-- Errors / states -->
+    <string name="offline_banner">אין חיבור · מוצגות תחנות וקווים שמורים</string>
+    <string name="error_no_internet">אין חיבור לאינטרנט</string>
+    <string name="error_api_down">שרת הנתונים לא עונה. נסו שוב בעוד רגע.</string>
+    <string name="error_not_found">לא נמצא</string>
+    <string name="error_unknown">משהו השתבש</string>
+    <string name="syncing_data">מוריד תחנות וקווים (פעם אחת)…</string>
+    <string name="sync_failed">לא הצלחנו להוריד תחנות. ננסה שוב כשיהיה חיבור.</string>
+
+    <!-- Map -->
+    <string name="search_hint">חיפוש קו, תחנה, קוד או מקום</string>
+    <string name="filter_all">כל האוטובוסים</string>
+    <string name="filter_favorites">הקווים שלי</string>
+    <string name="line_to">%1$s ← %2$s</string>
+    <string name="from_to">%1$s ← %2$s</string>
+    <string name="clear_line">ניקוי קו</string>
+    <string name="my_location">המיקום שלי</string>
+    <string name="location_rationale_title">להציג אוטובוסים סביבך?</string>
+    <string name="location_rationale">BusLive משתמשת במיקום רק בטלפון הזה, כדי למרכז את המפה ולמצוא תחנות קרובות. המיקום לא נשלח לשום מקום.</string>
+    <string name="legend_title">מה רואים במפה</string>
+    <string name="legend_live">מיקום GPS חי של אוטובוס (מספר קו, צבע לפי מפעיל, החץ = כיוון נסיעה)</string>
+    <string name="legend_faded">שקוף: מיקום GPS ישן מ-3 דקות</string>
+    <string name="legend_estimate">זמן הגעה מוערך לפי אוטובוס חי בדרך</string>
+    <string name="legend_planned">שעה רגילה = לוח זמנים מתוכנן</string>
+    <string name="legend_source">הנתונים החיים מגיעים מ-SIRI של משרד התחבורה דרך Open Bus Stride (הסדנא לידע ציבורי). הם נדגמים בערך פעם בדקה ובדרך כלל מאחרים ב-1–4 דקות.</string>
+    <string name="dropped_pin">נעץ במפה</string>
+    <string name="directions_here">הוראות הגעה</string>
+    <string name="save_home">בית</string>
+    <string name="save_work">עבודה</string>
+    <string name="save_place">שמירת מקום</string>
+
+    <!-- Bus panel -->
+    <string name="bus_gone">האוטובוס הזה כבר לא משדר.</string>
+    <string name="unknown_line">קו לא ידוע</string>
+    <string name="follow_bus">מעקב אחרי האוטובוס</string>
+    <string name="following">במעקב</string>
+    <string name="show_line">הצגת הקו</string>
+    <string name="schedule">לוח זמנים</string>
+    <string name="next_stops">התחנות הבאות</string>
+    <string name="no_route_info">לא נמצא לוח זמנים לנסיעה הזו.</string>
+    <string name="alert_me_at">התראה בתחנה %1$s</string>
+
+    <!-- Stop -->
+    <string name="stop">תחנה</string>
+    <string name="stop_code">קוד %1$d</string>
+    <string name="stop_code_title">תחנה %1$d</string>
+    <string name="loading_arrivals">טוען אוטובוסים קרובים…</string>
+    <string name="no_arrivals">אין אוטובוסים ב-3 השעות הקרובות</string>
+    <string name="show_on_map">הצגה במפה</string>
+    <string name="on_map">במפה</string>
+    <string name="remind_me">תזכורת 5 דק׳ לפני</string>
+    <string name="reminder_set">התזכורת נקבעה ⏰</string>
+    <string name="reminder_too_late">מאוחר מדי לתזכורת</string>
+    <string name="reminder_title">קו %1$s מתקרב</string>
+    <string name="reminder_now">קו %1$s מגיע עכשיו לתחנה %2$s</string>
+    <plurals name="reminder_minutes">
+        <item quantity="one">קו %1$s יגיע לתחנה %3$s בעוד כדקה</item>
+        <item quantity="two">קו %1$s יגיע לתחנה %3$s בעוד כ-%2$d דקות</item>
+        <item quantity="other">קו %1$s יגיע לתחנה %3$s בעוד כ-%2$d דקות</item>
+    </plurals>
+
+    <!-- Search -->
+    <string name="search">חיפוש</string>
+    <string name="clear">ניקוי</string>
+    <string name="more">אפשרויות נוספות</string>
+    <string name="recent_searches">חיפושים אחרונים</string>
+    <string name="search_tips">הקלידו מספר קו (למשל 480), שם תחנה או קוד תחנה בן 5 ספרות, או כל מקום וכתובת.</string>
+    <string name="section_lines">קווים</string>
+    <string name="section_stops">תחנות</string>
+    <string name="section_places">מקומות</string>
+    <string name="no_results">אין תוצאות</string>
+    <string name="osm_credit">חיפוש מקומות © תורמי OpenStreetMap ‏(Nominatim)</string>
+    <string name="save_as_home">שמירה כבית</string>
+    <string name="save_as_work">שמירה כעבודה</string>
+    <string name="saved">נשמר ⭐</string>
+
+    <!-- Favorites -->
+    <string name="set_home">הגדרת בית</string>
+    <string name="set_work">הגדרת עבודה</string>
+    <string name="remove">הסרה</string>
+    <string name="no_favorite_stops">הקישו ☆ בתחנה כדי לראות כאן את האוטובוסים הבאים שלה.</string>
+    <string name="no_favorite_lines">הקישו ☆ בקו כדי לשמור אותו כאן.</string>
+    <string name="favorites_empty">עוד לא נשמר כלום</string>
+    <string name="no_arrivals_2h">אין אוטובוסים בשעתיים הקרובות</string>
+    <string name="show_on_widget">הצגה בווידג׳ט במסך הבית</string>
+    <string name="on_widget">בווידג׳ט</string>
+    <string name="widget_no_stop">שמרו תחנה מועדפת ב-BusLive כדי לראות אותה כאן.</string>
+
+    <!-- Line -->
+    <string name="line_not_found">הקו לא נמצא בלוח הזמנים של היום</string>
+    <string name="today">היום</string>
+    <string name="tomorrow">מחר</string>
+    <string name="cancel">ביטול</string>
+    <string name="schedule_estimated_from">לוחות זמנים עתידיים עוד לא פורסמו. מוצג אותו יום בשבוע מתאריך %1$s.</string>
+    <string name="stops_tab">תחנות</string>
+    <string name="departures_tab">יציאות</string>
+    <string name="no_departures">אין יציאות ביום הזה</string>
+    <string name="trip_departing">נסיעה שיוצאת ב-%1$s</string>
+
+    <!-- Planner -->
+    <string name="plan_title">תכנון נסיעה</string>
+    <string name="from">מ</string>
+    <string name="to">אל</string>
+    <string name="choose_destination">בחירת יעד</string>
+    <string name="swap">החלפת מוצא ויעד</string>
+    <string name="picker_hint">תחנה, מקום או כתובת</string>
+    <string name="leave_now">יציאה עכשיו</string>
+    <string name="leave_at">יציאה ב-%1$s</string>
+    <string name="leave_at_title">שעת יציאה</string>
+    <string name="planning">מחפש אוטובוסים… (תחנות לידך × תחנות ליד היעד)</string>
+    <string name="recent_trips">נסיעות אחרונות</string>
+    <string name="plan_hint">בחרו יעד, או לחצו לחיצה ארוכה על המפה כדי להניח נעץ.</string>
+    <string name="plan_needs_location">אשרו מיקום כדי לצאת מהמקום שבו אתם נמצאים, או בחרו נקודת מוצא.</string>
+    <string name="no_trips_found">לא נמצא אוטובוס לנסיעה הזו בשעה הקרובה (ישיר או עם החלפה אחת).</string>
+    <string name="planner_local">מתכנן מובנה: קווים ישירים ונסיעות עם החלפה אחת, לפי זמנים מתוכננים.</string>
+    <string name="planner_otp">תוכנן על ידי שרת ה-OpenTripPlanner שלך.</string>
+    <string name="planner_otp_failed">שרת ה-OpenTripPlanner לא ענה, נעשה שימוש במתכנן המובנה.</string>
+    <string name="minutes_total">%1$d דק׳</string>
+    <plurals name="transfers">
+        <item quantity="one">החלפה אחת</item>
+        <item quantity="two">2 החלפות</item>
+        <item quantity="other">%1$d החלפות</item>
+    </plurals>
+    <string name="trip_breakdown" tools:ignore="PluralsCandidate">הליכה %1$d דק׳ · המתנה %2$d דק׳ · נסיעה %3$d דק׳ · %4$d תחנות</string>
+    <string name="start">התחלת ניווט חי</string>
+    <string name="destination">היעד</string>
+    <string name="leg_walk">הליכה %1$s אל %2$s</string>
+    <string name="leg_board">עלייה ב%1$s לכיוון %2$s</string>
+    <string name="leg_ride" tools:ignore="PluralsCandidate">נסיעה %1$d תחנות, ירידה ב%2$s (%3$s)</string>
+
+    <!-- Settings -->
+    <string name="language">שפה</string>
+    <string name="follow_system">לפי המכשיר</string>
+    <string name="theme">ערכת נושא</string>
+    <string name="theme_light">בהירה</string>
+    <string name="theme_dark">כהה</string>
+    <string name="offline_data">נתונים לשימוש ללא חיבור</string>
+    <string name="stops_synced">תחנות וקווים שמורים לתאריך %1$s (עודכן %2$s). מתעדכן כל יום ברקע.</string>
+    <string name="stops_not_synced">תחנות וקווים עוד לא הורדו.</string>
+    <string name="refresh_stops_now">רענון עכשיו</string>
+    <string name="syncing_short">מוריד…</string>
+    <string name="sync_failed_short">נכשל, ננסה שוב</string>
+    <string name="offline_map_desc">הורדת המפה סביבך (כ-9 ק״מ, זום 10–15) לשימוש בלי אינטרנט.</string>
+    <string name="offline_progress">%1$d%% · %2$d MB</string>
+    <string name="offline_done">המפה נשמרה לשימוש ללא חיבור (%1$d MB)</string>
+    <string name="offline_error">בעיה בהורדת המפה: %1$s</string>
+    <string name="download_my_area">הורדת האזור שלי</string>
+    <string name="delete_offline_map">מחיקת המפה השמורה</string>
+    <string name="otp_title">שרת תכנון נסיעות (לא חובה)</string>
+    <string name="otp_desc">אם יש לך OpenTripPlanner 2 (למשל על שרת Ubuntu משלך עם GTFS של ישראל), הזינו את כתובת הבסיס שלו. BusLive ישתמש בו לתכנון נסיעות ויחזור למתכנן המובנה אם השרת לא עונה.</string>
+    <string name="otp_url">כתובת OTP</string>
+    <string name="save">שמירה</string>
+    <string name="test">בדיקה</string>
+    <string name="otp_testing">בודק…</string>
+    <string name="otp_ok" tools:ignore="PluralsCandidate">השרת עובד (%1$d אפשרויות לנסיעת בדיקה)</string>
+    <string name="otp_failed">אין גישה לשרת: %1$s</string>
+    <string name="otp_using_builtin">בשימוש: המתכנן המובנה.</string>
+    <string name="otp_using">בשימוש: OpenTripPlanner בכתובת %1$s</string>
+    <string name="about">אודות</string>
+    <string name="about_text">BusLive מציגה מיקומי אוטובוסים בזמן אמת בישראל, זמני הגעה ותכנון נסיעות. מהירה, קלה, בלי פרסומות.</string>
+    <string name="privacy_text">פרטיות: בלי חשבונות, בלי פרסומות, בלי אנליטיקס ובלי מעקב. המיקום והמועדפים נשארים בטלפון.</string>
+    <string name="credits_text">נתוני תחבורה: Open Bus Stride API של הסדנא לידע ציבורי, מתוך GTFS ו-SIRI של משרד התחבורה. מפה: OpenFreeMap, ‏© OpenMapTiles, ‏© תורמי OpenStreetMap. חיפוש מקומות: Nominatim / OpenStreetMap.</string>
+
+    <!-- Near me -->
+    <string name="nearby_needs_location">אשרו מיקום כדי לראות את התחנות סביבך.</string>
+    <string name="allow_location">אישור מיקום</string>
+    <string name="no_location_fix">לא מצליחים לקבל מיקום כרגע. ה-GPS פועל?</string>
+    <string name="no_stops_nearby">אין תחנות בטווח 1.5 ק״מ</string>
+    <string name="no_arrivals_90">אין אוטובוסים ב-90 הדקות הקרובות</string>
+
+    <!-- Guidance -->
+    <string name="stop_directions">עצירה</string>
+    <string name="eta_at">הגעה ~%1$s</string>
+    <string name="walk_to">ללכת אל %1$s</string>
+    <string name="walk_minutes">%1$d דק׳ הליכה</string>
+    <string name="wait_for_line">לחכות לקו %1$s בתחנה %2$s</string>
+    <string name="bus_at">האוטובוס ב-%1$s</string>
+    <string name="ride_line_to">קו %1$s אל %2$s</string>
+    <plurals name="stops_left">
+        <item quantity="one">נשארה תחנה אחת</item>
+        <item quantity="two">נשארו 2 תחנות</item>
+        <item quantity="other">נשארו %1$d תחנות</item>
+    </plurals>
+    <string name="alert_get_ready_title">להתכונן · קו %1$s</string>
+    <plurals name="alert_get_ready">
+        <item quantity="one">נשארה תחנה אחת עד %2$s</item>
+        <item quantity="two">נשארו 2 תחנות עד %2$s</item>
+        <item quantity="other">נשארו %1$d תחנות עד %2$s</item>
+    </plurals>
+    <string name="alert_get_off_title">לרדת עכשיו!</string>
+    <string name="alert_get_off_text">התחנה שלך %1$s היא הבאה (קו %2$s)</string>
+    <string name="alert_arrived_title">הגעת 🎉</string>
+    <string name="alert_arrived_text">הגעת אל %1$s</string>
+    <string name="live_directions">ניווט חי</string>
+    <string name="share_trip">שיתוף הנסיעה</string>
+    <string name="no_active_directions">אין ניווט פעיל. תכננו נסיעה והקישו התחלה, או הקישו 🔔 ליד תחנה.</string>
+    <string name="waiting_gps">ממתין ל-GPS…</string>
+    <string name="next_bus_leaves">קו %1$s יוצא ב-%2$s (%3$s)</string>
+    <string name="wait_at">לחכות בתחנה %1$s</string>
+    <string name="bus_distance">האוטובוס במרחק %1$s (GPS %2$s)</string>
+    <string name="bus_not_live_yet">האוטובוס עוד לא משדר – מוצגת שעה מתוכננת.</string>
+    <string name="toward">לכיוון %1$s</string>
+    <string name="get_off_at">ירידה ב%1$s</string>
+    <string name="final_eta">%1$s בערך ב-%2$s</string>
+    <string name="guidance_note">הניווט ממשיך לעבוד גם כשהמסך כבוי. התראות התחנה מבוססות על ה-GPS של הטלפון. כשאתם רחוקים ה-GPS נבדק פחות, כדי לחסוך בסוללה.</string>
+    <string name="share_trip_text">אני בקו %1$s לתחנה %2$s, בדרך אל %3$s. הגעה משוערת %4$s. (דרך BusLive)</string>
+    <string name="share_trip_walk_text">אני בדרך אל %1$s. הגעה משוערת %2$s. (דרך BusLive)</string>
+</resources>

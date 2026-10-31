@@ -21,6 +21,14 @@ data class VehicleLocationDto(
     @SerialName("siri_ride__vehicle_ref") val vehicleRef: String? = null,
 )
 
+/** Row of `/siri_snapshots/list`: one SIRI download per minute. */
+@Serializable
+data class SiriSnapshotDto(
+    val id: Long,
+    @SerialName("snapshot_id") val snapshotId: String? = null,
+    @SerialName("etl_status") val etlStatus: String? = null,
+)
+
 /** Row of `/gtfs_stops/list`. */
 @Serializable
 data class GtfsStopDto(
