@@ -80,6 +80,7 @@ import com.buslive.app.ui.common.SheetCorner
 import com.buslive.app.ui.common.agoText
 import com.buslive.app.ui.common.errorMessage
 import com.buslive.app.ui.common.rememberNow
+import com.buslive.app.ui.nearby.NearbyViewModel
 import com.buslive.app.ui.stop.StopActions
 import com.buslive.app.ui.stop.StopDetailsList
 import com.buslive.app.ui.stop.StopDetailsViewModel
@@ -95,7 +96,11 @@ data class MapNav(
 )
 
 @Composable
-fun MapScreen(nav: MapNav, vm: MapViewModel = hiltViewModel()) {
+fun MapScreen(
+    nav: MapNav,
+    vm: MapViewModel = hiltViewModel(),
+    nearbyVm: NearbyViewModel = hiltViewModel(),
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     val online by vm.online.collectAsStateWithLifecycle()
     val sync by vm.syncState.collectAsStateWithLifecycle()
@@ -114,6 +119,7 @@ fun MapScreen(nav: MapNav, vm: MapViewModel = hiltViewModel()) {
     val permLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { r ->
         hasPerm = r.values.any { it }
         showRationale = false
+        nearbyVm.onPermissionResult()
         if (hasPerm) scope.launch { vm.currentLocation()?.let { controller?.moveTo(it, 15.5) } }
     }
     val alertPermLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { r ->
@@ -170,7 +176,9 @@ fun MapScreen(nav: MapNav, vm: MapViewModel = hiltViewModel()) {
     BackHandler(enabled = state.selection != null) { vm.clearSelection() }
 
     val initial = state.initialCenter
-    Box(Modifier.fillMaxSize()) {
+    // Home = 2/3 live map + 1/3 stops around you.
+    Column(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxWidth().weight(2f)) {
         if (initial != null) {
             BusMapView(
                 initialCenter = initial,
@@ -316,6 +324,16 @@ fun MapScreen(nav: MapNav, vm: MapViewModel = hiltViewModel()) {
                 }
             }
         }
+    }
+    NearbyStrip(
+        vm = nearbyVm,
+        modifier = Modifier.fillMaxWidth().weight(1f),
+        onRequestPermission = { permLauncher.launch(LOCATION_PERMS) },
+        onStop = { stop ->
+            vm.selectStop(stop.code)
+            controller?.moveTo(stop.point, 16.5)
+        },
+    )
     }
 
     if (showLegend) LegendDialog(onDismiss = { showLegend = false })

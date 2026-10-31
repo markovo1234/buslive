@@ -218,6 +218,7 @@
     <string name="credits_text">Bus data: Open Bus Stride API by the Public Knowledge Workshop (Hasadna), from Israel Ministry of Transport GTFS and SIRI. Map: OpenFreeMap, © OpenMapTiles, © OpenStreetMap contributors. Place search: Nominatim / OpenStreetMap.</string>
 
     <!-- Near me -->
+    <string name="stops_around_you">Stops around you</string>
     <string name="nearby_needs_location">Allow location to see the stops around you.</string>
     <string name="allow_location">Allow location</string>
     <string name="no_location_fix">Can\'t get your location right now. Is GPS on?</string>

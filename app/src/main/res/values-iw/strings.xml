@@ -221,6 +221,7 @@
     <string name="credits_text">נתוני תחבורה: Open Bus Stride API של הסדנא לידע ציבורי, מתוך GTFS ו-SIRI של משרד התחבורה. מפה: OpenFreeMap, ‏© OpenMapTiles, ‏© תורמי OpenStreetMap. חיפוש מקומות: Nominatim / OpenStreetMap.</string>
 
     <!-- Near me -->
+    <string name="stops_around_you">תחנות סביבך</string>
     <string name="nearby_needs_location">אשרו מיקום כדי לראות את התחנות סביבך.</string>
     <string name="allow_location">אישור מיקום</string>
     <string name="no_location_fix">לא מצליחים לקבל מיקום כרגע. ה-GPS פועל?</string>
