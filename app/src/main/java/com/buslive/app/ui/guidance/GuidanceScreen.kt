@@ -94,11 +94,16 @@ class GuidanceViewModel @Inject constructor(private val manager: GuidanceManager
     val state = manager.state
     fun stop() = manager.stop()
     fun shareText() = manager.shareText()
+    fun destination() = manager.destination()
 }
 
 /** Full-screen live directions: big map that follows you, current step, next step, stop progress. */
 @Composable
-fun GuidanceScreen(onBack: () -> Unit, vm: GuidanceViewModel = hiltViewModel()) {
+fun GuidanceScreen(
+    onBack: () -> Unit,
+    onReplan: (com.buslive.app.domain.model.Place) -> Unit,
+    vm: GuidanceViewModel = hiltViewModel(),
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val shareTitle = stringResource(R.string.share_trip)
@@ -139,15 +144,28 @@ fun GuidanceScreen(onBack: () -> Unit, vm: GuidanceViewModel = hiltViewModel()) 
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(Modifier.navigationBarsPadding().padding(bottom = 8.dp)) {
+                val replan: () -> Unit = {
+                    vm.destination()?.let { dest -> vm.stop(); onReplan(dest) }
+                }
+                if (s.missedBus) Surface(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, top = 12.dp),
+                ) {
+                    Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.missed_bus), Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                        Button(onClick = replan) { Text(stringResource(R.string.new_route)) }
+                    }
+                }
                 InstructionCard(s)
                 TripProgress(s)
                 NextStep(s)
                 StopProgress(s)
                 Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedButton(onClick = share, modifier = Modifier.weight(1f)) {
-                        Icon(Icons.Outlined.Share, null, Modifier.size(18.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text(shareTitle)
+                    OutlinedButton(onClick = {
+                        vm.destination()?.let { dest -> vm.stop(); onReplan(dest) }
+                    }, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.replan))
                     }
                     Button(
                         onClick = { vm.stop(); onBack() },

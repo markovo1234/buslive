@@ -27,7 +27,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.DirectionsBus
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.Work
 import androidx.compose.material.icons.outlined.LocationOff
 import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material.icons.outlined.Navigation
@@ -216,6 +219,36 @@ fun MapScreen(
             if (sync == SyncState.FAILED) InfoBanner(stringResource(R.string.sync_failed))
             if (guidance != null) GuidanceBanner(onClick = nav.openGuidance)
             SearchPill(onClick = nav.openSearch, onSettings = nav.openSettings)
+            val places by vm.savedPlaces.collectAsStateWithLifecycle()
+            if (places.isNotEmpty()) Row(
+                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                places.forEach { f ->
+                    val label = when (f.placeKind) {
+                        com.buslive.app.domain.model.PlaceKind.HOME -> stringResource(R.string.save_home)
+                        com.buslive.app.domain.model.PlaceKind.WORK -> stringResource(R.string.save_work)
+                        else -> f.title
+                    }
+                    androidx.compose.material3.SuggestionChip(
+                        onClick = { nav.planTo(Place(label, f.subtitle.orEmpty(), f.lat!!, f.lon!!)) },
+                        label = { Text(label, maxLines = 1) },
+                        icon = {
+                            Icon(
+                                when (f.placeKind) {
+                                    com.buslive.app.domain.model.PlaceKind.HOME -> Icons.Outlined.Home
+                                    com.buslive.app.domain.model.PlaceKind.WORK -> Icons.Outlined.Work
+                                    else -> Icons.Outlined.Place
+                                },
+                                null, Modifier.size(18.dp),
+                            )
+                        },
+                        colors = androidx.compose.material3.SuggestionChipDefaults.suggestionChipColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                        ),
+                    )
+                }
+            }
             Row(
                 Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

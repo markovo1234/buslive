@@ -53,6 +53,8 @@ data class GuidanceState(
     val readyAlerted: Boolean = false,
     val getOffAlerted: Boolean = false,
     val lastGpsAt: Instant? = null,
+    /** The bus we are going to take already left the boarding stop (trip recovery: offer a new route). */
+    val missedBus: Boolean = false,
 ) {
     val leg: TripLeg get() = trip.legs[legIndex.coerceIn(0, trip.legs.lastIndex)]
     val finalDestinationName: String
@@ -242,6 +244,7 @@ class GuidanceManager @Inject constructor(
             legIndex = nextIndex,
             phase = if (nextLeg is TripLeg.Bus) GuidancePhase.WAIT else GuidancePhase.WALK,
             stopsLeft = null,
+            missedBus = false,
             // Keep the tracked bus when we just walked to its stop.
             busEstimate = if (nextLeg is TripLeg.Bus) s.busEstimate else null,
             busPosition = if (nextLeg is TripLeg.Bus) s.busPosition else null,
@@ -260,9 +263,15 @@ class GuidanceManager @Inject constructor(
         } ?: return _state.update { it?.copy(busEstimate = null, busPosition = null) }
         if (leg.lineRef == null) return
         val buses = live.busesForLine(leg.lineRef)
-        val match = buses.firstOrNull { it.scheduledStart != null && it.scheduledStart == leg.rideStart }
-            ?: return _state.update { it?.copy(busEstimate = null, busPosition = null) }
         val boarding = leg.stops.firstOrNull()
+        val match = buses.firstOrNull { it.scheduledStart != null && it.scheduledStart == leg.rideStart }
+        if (match == null) {
+            // Not live: only call it missed when the planned time is well past.
+            val late = Instant.now().isAfter(leg.start.plusSeconds(5 * 60))
+            return _state.update { it?.copy(busEstimate = null, busPosition = null, missedBus = late) }
+        }
+        val passed = boarding?.shapeDistM != null && match.distanceFromStartM != null &&
+            match.distanceFromStartM > boarding.shapeDistM + 150
         val est = ArrivalEstimator.estimate(
             Arrival(
                 lineRef = leg.lineRef, shortName = leg.shortName, operatorRef = leg.operatorRef, agencyName = "",
@@ -272,7 +281,14 @@ class GuidanceManager @Inject constructor(
             ),
             match,
         )
-        _state.update { it?.copy(busEstimate = est, busPosition = match.point) }
+        _state.update { it?.copy(busEstimate = est, busPosition = match.point, missedBus = passed) }
+    }
+
+    /** Final destination of the running trip (for re-planning). */
+    fun destination(): com.buslive.app.domain.model.Place? {
+        val s = _state.value ?: return null
+        val p = s.trip.legs.last().path.lastOrNull() ?: return null
+        return com.buslive.app.domain.model.Place(s.finalDestinationName, "", p.lat, p.lon)
     }
 
     private fun estimateFinalEta(s: GuidanceState, p: GeoPoint): Instant {

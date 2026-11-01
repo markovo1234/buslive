@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -110,6 +111,10 @@ class MapViewModel @Inject constructor(
     val syncState = syncMonitor.state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SyncState.IDLE)
     val favoriteLineKeys = favorites.favoriteLineKeys.stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
     val guidanceState = guidance.state
+    /** Saved places for one-tap "take me there" chips on the home map. */
+    val savedPlaces = favorites.favorites
+        .map { list -> list.filter { it.type == com.buslive.app.domain.model.FavoriteType.PLACE && it.lat != null } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private var bbox: BBox? = null
     private var fetchedBox: BBox? = null

@@ -15,4 +15,5 @@ class RootViewModel @Inject constructor(
 ) : ViewModel() {
     fun sendMapCommand(c: MapCommand) = mapCommands.send(c)
     fun planTo(place: Place) = plannerCommands.planTo(place)
+    fun replanFromHere(place: Place) = plannerCommands.replanFromHere(place)
 }

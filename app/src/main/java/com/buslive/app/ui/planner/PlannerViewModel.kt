@@ -16,7 +16,10 @@ import com.buslive.app.domain.model.FavoriteType
 import com.buslive.app.domain.model.GeoPoint
 import com.buslive.app.domain.model.Place
 import com.buslive.app.domain.model.appRunCatching
+import com.buslive.app.domain.planner.Insight
 import com.buslive.app.domain.planner.LocalTripPlanner
+import com.buslive.app.domain.planner.TripInsights
+import com.buslive.app.domain.planner.TripSort
 import com.buslive.app.domain.planner.TripLeg
 import com.buslive.app.domain.planner.TripOption
 import com.buslive.app.domain.planner.TripPlannerProvider
@@ -55,6 +58,10 @@ data class PlannerState(
     val searched: Boolean = false,
     /** Option id → live estimate of its first bus at the boarding stop (null value = bus tracked, no ETA). */
     val live: Map<String, LiveEstimate?> = emptyMap(),
+    /** true = "arrive by [departAt]" instead of "leave at". */
+    val arriveBy: Boolean = false,
+    val sort: TripSort = TripSort.BEST,
+    val insights: Map<String, List<Insight>> = emptyMap(),
 ) {
     val selected: TripOption? get() = options.firstOrNull { it.id == selectedId }
 }
@@ -86,7 +93,9 @@ class PlannerViewModel @Inject constructor(
     private var appliedInitial: Place? = null
 
     init {
-        viewModelScope.launch { commands.destinations.collect { setTo(it) } }
+        viewModelScope.launch {
+            commands.destinations.collect { r -> if (r.fromHere) replanFromHere(r.place) else setTo(r.place) }
+        }
     }
 
     fun applyInitialDestination(p: Place?) {
@@ -113,8 +122,18 @@ class PlannerViewModel @Inject constructor(
         if (newTo != null) plan()
     }
 
-    fun setDepartAt(t: Instant?) {
-        _state.update { it.copy(departAt = t) }
+    fun setDepartAt(t: Instant?, arriveBy: Boolean = false) {
+        _state.update { it.copy(departAt = t, arriveBy = t != null && arriveBy) }
+        plan()
+    }
+
+    fun setSort(sort: TripSort) {
+        _state.update { it.copy(sort = sort, options = TripInsights.sort(it.options, sort)) }
+    }
+
+    /** Trip recovery: plan again from where I am now to the same destination. */
+    fun replanFromHere(destination: Place) {
+        _state.update { it.copy(from = Endpoint.MyLocation, to = destination, departAt = null, arriveBy = false) }
         plan()
     }
 
@@ -142,7 +161,10 @@ class PlannerViewModel @Inject constructor(
                     return@launch
                 }
             }
-            val departAt = s.departAt?.takeIf { it > Instant.now() } ?: Instant.now()
+            val now = Instant.now()
+            val target = s.departAt?.takeIf { it > now }
+            // Arrive by T: search from ~100 min before T, keep trips that arrive in time, leaving as late as possible.
+            val departAt = if (s.arriveBy && target != null) maxOf(now, target.minusSeconds(100 * 60)) else target ?: now
             val choice = provider.current()
             var usedOtp = choice.usingOtp
             var fellBack = false
@@ -152,11 +174,15 @@ class PlannerViewModel @Inject constructor(
                 usedOtp = false
                 result = appRunCatching { choice.fallback.plan(fromPoint, to.point, departAt) }
             }
-            result.onSuccess { options ->
+            result.onSuccess { found ->
+                val inTime = if (s.arriveBy && target != null) found.filter { it.arrival <= target } else found
+                val sort = if (s.arriveBy) TripSort.LEAVE_LATEST else _state.value.sort
+                val options = TripInsights.sort(inTime, sort)
                 _state.update {
                     it.copy(
                         options = options, loading = false, usedOtp = usedOtp, otpFellBack = fellBack,
                         selectedId = options.firstOrNull()?.id, noService = options.isEmpty(),
+                        sort = sort, insights = TripInsights.compute(options),
                     )
                 }
                 options.firstOrNull()?.let { fillStops(it.id) }

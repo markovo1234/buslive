@@ -10,7 +10,11 @@ import javax.inject.Singleton
 /** "Plan a trip to X" from any screen. The Plan tab picks it up, so there is only ever one planner screen. */
 @Singleton
 class PlannerCommands @Inject constructor() {
-    private val channel = Channel<Place>(Channel.CONFLATED)
-    val destinations: Flow<Place> = channel.receiveAsFlow()
-    fun planTo(place: Place) { channel.trySend(place) }
+    data class Request(val place: Place, val fromHere: Boolean)
+
+    private val channel = Channel<Request>(Channel.CONFLATED)
+    val destinations: Flow<Request> = channel.receiveAsFlow()
+    fun planTo(place: Place) { channel.trySend(Request(place, fromHere = false)) }
+    /** Trip recovery: new route from my current location. */
+    fun replanFromHere(place: Place) { channel.trySend(Request(place, fromHere = true)) }
 }

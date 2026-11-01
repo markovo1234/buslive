@@ -133,11 +133,30 @@ fun PlannerScreen(
                     AssistChip(
                         onClick = { showTime = true },
                         label = {
-                            Text(state.departAt?.let { stringResource(R.string.leave_at, TimeUtil.formatTime(it)) } ?: stringResource(R.string.leave_now))
+                            Text(
+                                state.departAt?.let {
+                                    stringResource(if (state.arriveBy) R.string.arrive_by else R.string.leave_at, TimeUtil.formatTime(it))
+                                } ?: stringResource(R.string.leave_now)
+                            )
                         },
                         leadingIcon = { Icon(Icons.Outlined.AccessTime, null, Modifier.size(AssistChipDefaults.IconSize)) },
                     )
                     if (state.departAt != null) TextButton(onClick = { vm.setDepartAt(null) }) { Text(stringResource(R.string.leave_now)) }
+                    // Smart sorting (free).
+                    if (state.options.size > 1) {
+                        listOf(
+                            com.buslive.app.domain.planner.TripSort.BEST to R.string.sort_best,
+                            com.buslive.app.domain.planner.TripSort.FEWEST_TRANSFERS to R.string.sort_transfers,
+                            com.buslive.app.domain.planner.TripSort.LEAST_WALKING to R.string.sort_walking,
+                            com.buslive.app.domain.planner.TripSort.LEAVE_LATEST to R.string.sort_latest,
+                        ).forEach { (sort, label) ->
+                            androidx.compose.material3.FilterChip(
+                                selected = state.sort == sort,
+                                onClick = { vm.setSort(sort) },
+                                label = { Text(stringResource(label)) },
+                            )
+                        }
+                    }
                 }
                 if (state.loading) Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                     LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -203,6 +222,7 @@ fun PlannerScreen(
                             option = o,
                             selected = o.id == state.selectedId,
                             tracked = state.live.containsKey(o.id),
+                            insights = state.insights[o.id].orEmpty(),
                             live = state.live[o.id],
                             onClick = { vm.select(o.id) },
                             onStart = {
@@ -241,15 +261,27 @@ fun PlannerScreen(
     if (showTime) {
         val now = LocalTime.now(TimeUtil.ZONE)
         val tp = rememberTimePickerState(initialHour = now.hour, initialMinute = now.minute, is24Hour = true)
+        var arriveMode by remember { mutableStateOf(state.arriveBy) }
         AlertDialog(
             onDismissRequest = { showTime = false },
-            title = { Text(stringResource(R.string.leave_at_title)) },
+            title = {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    androidx.compose.material3.FilterChip(
+                        selected = !arriveMode, onClick = { arriveMode = false },
+                        label = { Text(stringResource(R.string.leave_at_title)) },
+                    )
+                    androidx.compose.material3.FilterChip(
+                        selected = arriveMode, onClick = { arriveMode = true },
+                        label = { Text(stringResource(R.string.arrive_by_title)) },
+                    )
+                }
+            },
             text = { TimePicker(state = tp) },
             confirmButton = {
                 TextButton(onClick = {
                     var t = TimeUtil.today().atTime(tp.hour, tp.minute).atZone(TimeUtil.ZONE).toInstant()
                     if (t < Instant.now().minusSeconds(60)) t = t.plusSeconds(24 * 3600)
-                    vm.setDepartAt(t)
+                    vm.setDepartAt(t, arriveBy = arriveMode)
                     showTime = false
                 }) { Text(stringResource(R.string.ok)) }
             },
@@ -330,6 +362,7 @@ private fun TripCard(
     option: TripOption,
     selected: Boolean,
     tracked: Boolean,
+    insights: List<com.buslive.app.domain.planner.Insight>,
     live: com.buslive.app.domain.model.LiveEstimate?,
     onClick: () -> Unit,
     onStart: () -> Unit,
@@ -360,6 +393,10 @@ private fun TripCard(
                     color = MaterialTheme.colorScheme.tertiary,
                 )
             }
+            if (insights.isNotEmpty()) FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.padding(bottom = 4.dp),
+            ) { insights.forEach { InsightTag(it) } }
             // When to leave + is the first bus already driving?
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -461,5 +498,26 @@ private fun LegRow(leg: TripLeg) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun InsightTag(i: com.buslive.app.domain.planner.Insight) {
+    val warn = i == com.buslive.app.domain.planner.Insight.TIGHT_TRANSFER || i == com.buslive.app.domain.planner.Insight.LONG_WAIT
+    val label = when (i) {
+        com.buslive.app.domain.planner.Insight.EARLIEST_ARRIVAL -> R.string.ins_earliest
+        com.buslive.app.domain.planner.Insight.FEWEST_TRANSFERS -> R.string.ins_fewest_transfers
+        com.buslive.app.domain.planner.Insight.LEAST_WALKING -> R.string.ins_least_walking
+        com.buslive.app.domain.planner.Insight.DIRECT -> R.string.ins_direct
+        com.buslive.app.domain.planner.Insight.LAST_DEPARTURE -> R.string.ins_last_departure
+        com.buslive.app.domain.planner.Insight.TIGHT_TRANSFER -> R.string.ins_tight_transfer
+        com.buslive.app.domain.planner.Insight.LONG_WAIT -> R.string.ins_long_wait
+    }
+    androidx.compose.material3.Surface(
+        shape = RoundedCornerShape(6.dp),
+        color = if (warn) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.primaryContainer,
+        contentColor = if (warn) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onPrimaryContainer,
+    ) {
+        Text(stringResource(label), style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp))
     }
 }

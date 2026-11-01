@@ -188,7 +188,14 @@ fun AppRoot(openGuidanceRequest: Int, rootVm: RootViewModel = hiltViewModel()) {
                 )
             }
             composable<GuidanceDest> {
-                GuidanceScreen(onBack = { nav.popBackStack() })
+                GuidanceScreen(
+                    onBack = { nav.popBackStack() },
+                    onReplan = { dest ->
+                        rootVm.replanFromHere(dest)
+                        nav.popBackStack()
+                        nav.navigateTab(PlannerDest())
+                    },
+                )
             }
             composable<SettingsDest> {
                 SettingsScreen(onBack = { nav.popBackStack() })
