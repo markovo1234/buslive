@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>BusLive – אוטובוסים בזמן אמת</title>
+  <meta name="description" content="Live Israeli buses, stops and arrivals. Free, no ads, no tracking.">
+  <meta name="theme-color" content="#0E7C86">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="map" aria-label="map"></div>
+
+  <header id="top">
+    <div id="searchbar">
+      <img src="icon.svg" alt="" class="logo">
+      <input id="search" type="search" autocomplete="off" data-i18n-placeholder="searchHint">
+      <button id="langBtn" class="icon-btn" title="Language">EN</button>
+      <a id="appBtn" class="app-btn" href="#download" data-i18n="getApp">📲 App</a>
+    </div>
+    <div id="results" hidden></div>
+    <div id="chips">
+      <button class="chip active" data-filter="all" data-i18n="allBuses">All buses</button>
+      <button id="lineChip" class="chip line-chip" hidden></button>
+    </div>
+    <div id="offline" class="banner" hidden data-i18n="offline">Offline</div>
+  </header>
+
+  <div id="fabs">
+    <button id="legendBtn" class="fab" title="?" aria-label="legend">i</button>
+    <button id="nearBtn" class="fab" aria-label="near me">⌖</button>
+  </div>
+  <div id="status" class="pill" role="status"></div>
+
+  <section id="panel" hidden>
+    <div class="handle"></div>
+    <button id="panelClose" class="icon-btn close" aria-label="close">✕</button>
+    <div id="panelBody"></div>
+  </section>
+
+  <dialog id="download">
+    <h2 data-i18n="dlTitle">BusLive for Android</h2>
+    <p data-i18n="dlText">Free, no ads, no tracking. Live map, arrivals, trip planner, live directions with get-off alerts, widget.</p>
+    <a class="btn primary" href="https://github.com/markovo1234/buslive/releases/latest/download/app-arm64-v8a-release.apk" data-i18n="dlMain">Download APK (most phones)</a>
+    <a class="btn" href="https://github.com/markovo1234/buslive/releases/latest/download/app-universal-release.apk" data-i18n="dlUniversal">Universal APK (any phone)</a>
+    <p class="small" data-i18n="dlHow">Open the file on your phone and allow "Install unknown apps".</p>
+    <form method="dialog"><button class="btn" data-i18n="close">Close</button></form>
+  </dialog>
+
+  <dialog id="legend">
+    <h2 data-i18n="legendTitle">What the map shows</h2>
+    <p data-i18n="legendLive">Colored marker = live bus GPS (line number, arrow = heading). Faded = older than 3 min.</p>
+    <p data-i18n="legendEst">LIVE · estimate = arrival estimated from a live bus on the way. Plain time = timetable.</p>
+    <p class="small" data-i18n="legendSrc">Data: Open Bus Stride (Hasadna) from the Ministry of Transport SIRI/GTFS. Live data is ~1–4 min behind. Map © OpenFreeMap, OpenMapTiles, OpenStreetMap contributors.</p>
+    <form method="dialog"><button class="btn" data-i18n="close">Close</button></form>
+  </dialog>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

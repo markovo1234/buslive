@@ -1,0 +1,10 @@
+{
+  "name": "BusLive",
+  "short_name": "BusLive",
+  "description": "Live Israeli buses, stops and arrivals",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0E7C86",
+  "theme_color": "#0E7C86",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
