@@ -71,6 +71,16 @@ For a stop S and a live bus on ride R (matched by line_ref + scheduled start):
 `eta = recorded_at_time + remaining_m / planned_speed` (bus velocity used only when moving and plausible).
 Shown with a "LIVE · estimate" tag. If `remaining_m < 0` the bus already passed.
 
+## Quirks seen on 2026-11-01
+
+* **`start_time` can be null** for all of today's rides (`/gtfs_rides/list` and `gtfs_ride__start_time` in ride stops),
+  while yesterday's are filled. Live buses are therefore matched to planned rides by **trip number**:
+  SIRI `siri_ride__journey_ref` `2026-11-01-40514797` ↔ GTFS `journey_ref` `40514797_011126`.
+  For timetables the app reads each ride's departure at the route's first stop
+  (`gtfs_ride_stops?gtfs_stop__code=..&gtfs_ride__gtfs_route_id=..&arrival_time_from/to`, ~14 s, cached).
+* **The SIRI pipeline can lag ~7–10 min.** The live window is anchored to the newest *loaded* snapshot
+  (`snapshot_id` = UTC minute), not the wall clock, and markers fade relative to that time.
+
 ## Data saver
 
 `/siri_snapshots/list?limit=3&order_by=id desc` (~1.4 KB) shows the newest SIRI snapshot and its `etl_status`.

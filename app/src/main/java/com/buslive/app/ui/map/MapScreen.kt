@@ -157,7 +157,10 @@ fun MapScreen(
         }
     }
     // Push state into the map.
-    LaunchedEffect(controller, state.buses) { controller?.setBuses(state.buses) }
+    LaunchedEffect(controller, state.buses) {
+        val now = java.time.Instant.now()
+        controller?.setBuses(state.buses, state.feedTime?.let { minOf(it, now) } ?: now)
+    }
     LaunchedEffect(controller, state.stops) { controller?.setStops(state.stops) }
     LaunchedEffect(controller, state.userLocation) { controller?.setUser(state.userLocation) }
     LaunchedEffect(controller, state.followBus) { controller?.setFollow(state.followBus) }

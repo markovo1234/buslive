@@ -71,20 +71,60 @@ class ScheduleRepository @Inject constructor(
         return list
     }
 
+    private val rawRidesCache = LruCache<Long, List<com.buslive.app.data.api.GtfsRideDto>>(96)
+
+    private suspend fun rawRides(routeId: Long): List<com.buslive.app.data.api.GtfsRideDto> {
+        rawRidesCache.get(routeId)?.let { return it }
+        val raw = limiter.withPermit { api.rides(routeId = routeId, limit = 600) }
+        if (raw.isNotEmpty()) rawRidesCache.put(routeId, raw)
+        return raw
+    }
+
     suspend fun rides(routeId: Long): List<Ride> {
         ridesCache.get(routeId)?.let { return it }
-        val list = limiter.withPermit { api.rides(routeId = routeId, limit = 600) }
-            .mapNotNull { r ->
-                val start = TimeUtil.parse(r.startTime) ?: return@mapNotNull null
-                Ride(rideId = r.id, routeId = r.routeId ?: routeId, start = start, end = TimeUtil.parse(r.endTime))
-            }
-            .sortedBy { it.start }
-        ridesCache.put(routeId, list)
+        val raw = rawRides(routeId)
+        // The API sometimes has no start_time for today's rides yet. Then read the departure time of every ride
+        // at the route's first stop (2 small calls) instead.
+        val starts: Map<Long, Instant> = if (raw.isNotEmpty() && raw.all { it.startTime == null }) {
+            runCatching { startsFromFirstStop(routeId, raw.first().id) }.getOrDefault(emptyMap())
+        } else emptyMap()
+        val list = raw.mapNotNull { r ->
+            val start = TimeUtil.parse(r.startTime) ?: starts[r.id] ?: return@mapNotNull null
+            Ride(rideId = r.id, routeId = r.routeId ?: routeId, start = start, end = TimeUtil.parse(r.endTime), journeyRef = r.journeyRef)
+        }.sortedBy { it.start }
+        if (list.isNotEmpty()) ridesCache.put(routeId, list)
         return list
+    }
+
+    private suspend fun startsFromFirstStop(routeId: Long, sampleRideId: Long): Map<Long, Instant> {
+        val first = rideStops(sampleRideId).firstOrNull() ?: return emptyMap()
+        val day = first.arrival.atZone(TimeUtil.ZONE).toLocalDate()
+        val from = day.atStartOfDay(TimeUtil.ZONE).toInstant()
+        val to = day.plusDays(1).atTime(4, 0).atZone(TimeUtil.ZONE).toInstant()
+        val rows = limiter.withPermit {
+            api.rideStopsAtStopOfRoute(
+                stopCode = first.stopCode, routeId = routeId,
+                arrivalFrom = TimeUtil.toApi(from), arrivalTo = TimeUtil.toApi(to),
+            )
+        }
+        return rows.filter { it.stopSequence <= 1 || it.stopSequence == first.sequence }
+            .mapNotNull { r -> TimeUtil.parse(r.departureTime ?: r.arrivalTime)?.let { r.rideId to it } }
+            .toMap()
     }
 
     /** Planned ride of a live bus: same line, same scheduled start. */
     suspend fun matchRide(bus: LiveBus): Ride? {
+        // Best: same trip number (works even when the API has no start times).
+        bus.tripNumber?.let { trip ->
+            val today = TimeUtil.today()
+            for (date in listOf(today, today.minusDays(1))) {
+                val line = lineFor(bus.lineRef, date) ?: continue
+                val r = rawRides(line.routeId).firstOrNull { it.journeyRef?.substringBefore('_') == trip } ?: continue
+                // SIRI's scheduled start is the planned start, so we don't need the (sometimes empty) GTFS one.
+                val start = TimeUtil.parse(r.startTime) ?: bus.scheduledStart ?: continue
+                return Ride(r.id, r.routeId ?: line.routeId, start, TimeUtil.parse(r.endTime), r.journeyRef)
+            }
+        }
         val start = bus.scheduledStart ?: return null
         val startDate = start.atZone(TimeUtil.ZONE).toLocalDate()
         val candidates = buildList {
@@ -137,6 +177,8 @@ private fun GtfsRideStopDto.toArrival(): Arrival? {
         routeId = routeId ?: 0,
         rideStart = TimeUtil.parse(rideStartTime) ?: planned,
         planned = planned,
+        rideStartKnown = rideStartTime != null,
+        tripNumber = rideJourneyRef?.substringBefore('_')?.takeIf { it.isNotBlank() },
         stopSequence = stopSequence,
         shapeDistM = shapeDistTraveled ?: if (stopSequence == 1) 0 else null,
         dropOffAllowed = dropOffType != 1,

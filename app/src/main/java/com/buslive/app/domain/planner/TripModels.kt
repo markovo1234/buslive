@@ -33,6 +33,8 @@ sealed interface TripLeg {
         val headsign: String,
         val rideId: Long?,
         val rideStart: Instant?,
+        /** GTFS trip number to find the live bus of this ride. */
+        val tripNumber: String? = null,
         val from: StopRef,
         val to: StopRef,
         override val start: Instant,

@@ -264,7 +264,8 @@ class GuidanceManager @Inject constructor(
         if (leg.lineRef == null) return
         val buses = live.busesForLine(leg.lineRef)
         val boarding = leg.stops.firstOrNull()
-        val match = buses.firstOrNull { it.scheduledStart != null && it.scheduledStart == leg.rideStart }
+        val match = buses.firstOrNull { leg.tripNumber != null && it.tripNumber == leg.tripNumber }
+            ?: buses.firstOrNull { it.scheduledStart != null && it.scheduledStart == leg.rideStart }
         if (match == null) {
             // Not live: only call it missed when the planned time is well past.
             val late = Instant.now().isAfter(leg.start.plusSeconds(5 * 60))
@@ -276,7 +277,7 @@ class GuidanceManager @Inject constructor(
             Arrival(
                 lineRef = leg.lineRef, shortName = leg.shortName, operatorRef = leg.operatorRef, agencyName = "",
                 destination = leg.headsign, rideId = leg.rideId ?: 0, routeId = 0,
-                rideStart = leg.rideStart ?: leg.start, planned = leg.start,
+                rideStart = leg.rideStart ?: leg.start, planned = leg.start, rideStartKnown = leg.rideStart != null,
                 stopSequence = boarding?.sequence ?: 0, shapeDistM = boarding?.shapeDistM,
             ),
             match,

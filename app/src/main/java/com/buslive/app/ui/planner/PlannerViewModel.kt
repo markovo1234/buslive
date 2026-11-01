@@ -231,7 +231,8 @@ class PlannerViewModel @Inject constructor(
             val now = Instant.now()
             val result = HashMap<String, LiveEstimate?>()
             for ((id, leg) in firsts) {
-                val bus = buses.firstOrNull { it.lineRef == leg.lineRef && it.scheduledStart != null && it.scheduledStart == leg.rideStart }
+                val bus = buses.firstOrNull { leg.tripNumber != null && it.tripNumber == leg.tripNumber }
+                    ?: buses.firstOrNull { it.lineRef == leg.lineRef && it.scheduledStart != null && it.scheduledStart == leg.rideStart }
                     ?: continue
                 val opt = _state.value.options.firstOrNull { it.id == id }
                 val boarding = (opt?.busLegs?.firstOrNull() ?: leg).stops.firstOrNull()
@@ -239,7 +240,7 @@ class PlannerViewModel @Inject constructor(
                     Arrival(
                         lineRef = bus.lineRef, shortName = leg.shortName, operatorRef = leg.operatorRef, agencyName = "",
                         destination = leg.headsign, rideId = leg.rideId ?: 0, routeId = 0,
-                        rideStart = leg.rideStart ?: leg.start, planned = leg.start,
+                        rideStart = leg.rideStart ?: leg.start, planned = leg.start, rideStartKnown = leg.rideStart != null,
                         stopSequence = boarding?.sequence ?: 0, shapeDistM = boarding?.shapeDistM,
                     ),
                     bus, now,

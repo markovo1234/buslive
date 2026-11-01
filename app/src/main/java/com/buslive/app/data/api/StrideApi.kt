@@ -83,6 +83,17 @@ interface StrideApi {
         @Query("order_by") orderBy: String = "arrival_time asc",
     ): List<GtfsRideStopDto>
 
+    /** Calls of one route at one stop in a time window (used to get departure times at the first stop). */
+    @GET("gtfs_ride_stops/list")
+    suspend fun rideStopsAtStopOfRoute(
+        @Query("gtfs_stop__code") stopCode: Int,
+        @Query("gtfs_ride__gtfs_route_id") routeId: Long,
+        @Query("arrival_time_from") arrivalFrom: String,
+        @Query("arrival_time_to") arrivalTo: String,
+        @Query("limit") limit: Int = 600,
+        @Query("order_by") orderBy: String = "arrival_time asc",
+    ): List<GtfsRideStopDto>
+
     companion object {
         const val BASE_URL = "https://open-bus-stride-api.hasadna.org.il/"
         /** Server hard limit per request. */

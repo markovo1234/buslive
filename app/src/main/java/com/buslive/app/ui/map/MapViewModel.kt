@@ -87,6 +87,8 @@ data class MapUiState(
     val userLocation: GeoPoint? = null,
     val initialCenter: GeoPoint? = null,
     val zoom: Double = 15.0,
+    /** Freshness of the whole live feed (newest loaded snapshot); markers fade relative to it. */
+    val feedTime: Instant? = null,
     /** Last camera, so coming back to the map tab keeps your place instead of jumping. */
     val cameraCenter: GeoPoint? = null,
 )
@@ -226,6 +228,7 @@ class MapViewModel @Inject constructor(
                     zoomTooLow = buses == null,
                     lastUpdated = if (buses != null) Instant.now() else it.lastUpdated,
                     newestRecordedAt = buses?.maxOfOrNull { b -> b.recordedAt },
+                    feedTime = live.feedTime,
                     loadingBuses = false,
                     busError = null,
                 )
@@ -350,6 +353,7 @@ class MapViewModel @Inject constructor(
                     lineRef = bus.lineRef, shortName = bus.shortName, operatorRef = bus.operatorRef,
                     agencyName = "", destination = "", rideId = ride?.rideId ?: 0, routeId = ride?.routeId ?: 0,
                     rideStart = ride?.start ?: rs.arrival, planned = rs.arrival, stopSequence = rs.sequence,
+                    rideStartKnown = ride != null,
                     shapeDistM = rs.shapeDistM,
                 )
                 rs to ArrivalEstimator.estimate(a, bus, now)

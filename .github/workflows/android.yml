@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write  # publishes the "latest" GitHub Release with the APKs (used by the website download links)
 
 jobs:
   build:
@@ -51,3 +51,16 @@ jobs:
           name: buslive-release-apks
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
+
+      - name: Publish APKs as the latest release
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest \
+            app/build/outputs/apk/release/*.apk \
+            app/build/outputs/apk/debug/app-debug.apk \
+            --title "BusLive – latest build" \
+            --notes "Automatic build of ${GITHUB_SHA::7} (${GITHUB_REF_NAME}). Most phones: app-arm64-v8a-release.apk. Any phone: app-universal-release.apk." \
+            --target "$GITHUB_SHA" --latest

@@ -90,6 +90,8 @@ data class LiveBus(
     val line: Line?,
     /** Label to show when [line] is unknown (e.g. the bus tracked during live directions). */
     val labelOverride: String? = null,
+    /** Trip number from SIRI journey_ref "2026-11-01-40514797" → "40514797" (= GTFS journey_ref "40514797_011126"). */
+    val tripNumber: String? = null,
 ) {
     val point get() = GeoPoint(lat, lon)
     val shortName: String get() = line?.shortName ?: labelOverride ?: "?"
@@ -116,7 +118,10 @@ data class Ride(
     val routeId: Long,
     val start: Instant,
     val end: Instant?,
-)
+    val journeyRef: String? = null,
+) {
+    val tripNumber: String? get() = journeyRef?.substringBefore('_')?.takeIf { it.isNotBlank() }
+}
 
 data class LiveEstimate(
     val eta: Instant,
@@ -140,6 +145,10 @@ data class Arrival(
     val shapeDistM: Int?,
     val live: LiveEstimate? = null,
     val dropOffAllowed: Boolean = true,
+    /** GTFS trip number, used to match the live bus of this ride. */
+    val tripNumber: String? = null,
+    /** False when the API had no ride start time and [rideStart] is just a placeholder. */
+    val rideStartKnown: Boolean = true,
 ) {
     /** Best guess of arrival time: live estimate if any, else planned. */
     val best: Instant get() = live?.eta ?: planned
