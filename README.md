@@ -11,6 +11,8 @@ Hebrew + English (full RTL), light + dark mode, works offline with cached stops 
 
 **https://markovo1234.github.io/buslive/** – live bus map, stops with live arrivals, line routes, search
 (lines / stops / places), near me, Hebrew/English. Works in any browser, can be added to the home screen.
+**iPhone / iPad:** open the link in Safari → Share → **Add to Home Screen** – it opens full screen like an app
+(side panel layout on iPad). The Android APK does not run on iOS.
 It also has the **📲 App** button that downloads the newest APK from the
 [latest release](https://github.com/markovo1234/buslive/releases/latest).
 
